@@ -1,0 +1,345 @@
+import React, { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+
+// ------------------------------------------------------------
+// Página: Contratação Digital (somente Loja Virtual)
+// Visual profissional + seção persuasiva + planos + tabela + FAQ
+// ------------------------------------------------------------
+
+type Billing = "mensal" | "trimestral" | "anual";
+
+// Tabela de valores por plano
+const PRICES = {
+  essencial: { mensal: 749, trimestral: 600, anual: 500 },
+  avancado: { mensal: 900, trimestral: 800, anual: 600 },
+  premium: { mensal: 1200, trimestral: 1000, anual: 900 },
+} as const;
+
+const formatBRL = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+const Badge = ({ children, tone = "indigo" }: { children: React.ReactNode; tone?: "indigo" | "emerald" | "purple" }) => (
+  <span
+    className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+      tone === "emerald"
+        ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+        : tone === "purple"
+        ? "bg-purple-50 text-purple-700 ring-1 ring-purple-200"
+        : "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200"
+    }`}
+  >
+    {children}
+  </span>
+);
+
+const CheckItem = ({ children }: { children: React.ReactNode }) => (
+  <li className="flex gap-3 text-slate-700">
+    <span className="mt-0.5 inline-flex h-5 w-5 flex-none items-center justify-center rounded-full bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300">✓</span>
+    <span>{children}</span>
+  </li>
+);
+
+const FeatureCard = ({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) => (
+  <motion.div
+    whileHover={{ y: -6, scale: 1.02 }}
+    transition={{ type: "spring", stiffness: 220, damping: 18 }}
+    className="group relative rounded-2xl border border-white/70 bg-white/80 p-5 shadow-[0_14px_40px_rgba(2,6,23,0.08)] backdrop-blur"
+  >
+    <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-fuchsia-600 text-white shadow-md">{icon}</div>
+    <h3 className="mb-1 text-lg font-semibold text-slate-900">{title}</h3>
+    <p className="text-sm text-slate-600">{desc}</p>
+  </motion.div>
+);
+
+const FEATURES = [
+  {
+    title: "Sua loja aberta o tempo todo",
+    desc: "Mesmo quando o movimento na rua cai, o site continua vendendo 24h: clientes escolhem, pagam e recebem em casa.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+        <path d="M12 3a9 9 0 100 18 9 9 0 000-18zm1 5a1 1 0 10-2 0v5a1 1 0 00.293.707l3 3a1 1 0 001.414-1.414L13 12.586V8z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Você só separa o pedido",
+    desc: "O sistema avisa, você embala e manda entregar. Simples como atender no balcão, sem complicação técnica.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+        <path d="M3 7l9-4 9 4-9 4-9-4zm0 6l9 4 9-4v4l-9 4-9-4v-4z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Venda sem depender do fluxo",
+    desc: "Quem procura seu produto encontra sua loja no Google e no Instagram e compra direto no site.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+        <path d="M10 3h4v2h-4V3zM4 7h16v2H4V7zm3 4h10v2H7v-2zm-3 4h16v2H4v-2zM9 19h6v2H9v-2z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Feita por quem entende o comércio local",
+    desc: "Mais de 5 anos atendendo negócios da região: linguagem simples, estratégia prática e resultado.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+        <path d="M12 2l4 4H8l4-4zM4 8h16v12H4V8zm4 3v6h8v-6H8z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Instagram que gera carrinhos",
+    desc: "Você recebe planejamento e vídeos prontos (Reels) para levar público ao produto certo, no momento certo.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+        <path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm5 5a5 5 0 100 10 5 5 0 000-10zm6-.5a1.5 1.5 0 11-3.001.001A1.5 1.5 0 0118 6.5z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Suporte direto e humanizado",
+    desc: "Sem filas e sem robô: fale com quem construiu sua loja e resolva rápido, no dia a dia.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+        <path d="M12 2a7 7 0 00-7 7v3H3a1 1 0 000 2h2v1a7 7 0 0014 0v-1h2a1 1 0 000-2h-2V9a7 7 0 00-7-7z" />
+      </svg>
+    ),
+  },
+] as const;
+
+function PlanCard({ title, highlight, price, cta, bullets }: { title: string; highlight?: React.ReactNode; price: string; cta: string; bullets: React.ReactNode[] }) {
+  return (
+    <motion.div whileHover={{ y: -6 }} transition={{ type: "spring", stiffness: 200, damping: 18 }} className="relative rounded-3xl border border-white/70 bg-white/80 p-6 shadow-[0_20px_60px_rgba(2,6,23,0.08)] backdrop-blur-md">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-xl font-bold text-slate-900">{title}</h3>
+        {highlight}
+      </div>
+      <div className="mb-4 flex items-end gap-2">
+        <AnimatePresence mode="wait">
+          <motion.span key={price} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }} className="text-4xl font-extrabold leading-none tracking-tight text-slate-900">
+            {price}
+          </motion.span>
+        </AnimatePresence>
+        <span className="mb-1 text-sm text-slate-500">/mês</span>
+      </div>
+      <ul className="mb-6 space-y-3">{bullets}</ul>
+      <a href="#cta" className="block rounded-2xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 px-5 py-3 text-center font-medium text-white shadow hover:opacity-95">{cta}</a>
+    </motion.div>
+  );
+}
+
+export default function ContratacaoLoja() {
+  const [billing, setBilling] = useState<Billing>("mensal");
+
+  const prices = useMemo(
+    () => ({
+      essencial: formatBRL(PRICES.essencial[billing]),
+      avancado: formatBRL(PRICES.avancado[billing]),
+      premium: formatBRL(PRICES.premium[billing]),
+    }),
+    [billing]
+  );
+
+  return (
+    <div className="min-h-screen bg-[radial-gradient(80%_60%_at_50%_0%,#eef2ff_0%,transparent_60%)] from-slate-50 to-slate-100 text-slate-900">
+      {/* NAV */}
+      <header className="sticky top-0 z-50 backdrop-blur">
+        <nav className="mx-auto mt-3 flex max-w-6xl items-center justify-between rounded-2xl border border-white/60 bg-white/80 px-5 py-3 shadow">
+          <div className="flex items-center gap-2"><div className="h-7 w-7 rounded-lg bg-gradient-to-br from-indigo-600 to-fuchsia-600" /><span className="text-sm font-semibold">Contratação Digital</span></div>
+          <div className="hidden gap-6 md:flex"><a href="#loja" className="text-sm text-slate-700 hover:text-slate-900">Loja Virtual</a><a href="#faq" className="text-sm text-slate-700 hover:text-slate-900">FAQ</a></div>
+          <a href="#cta" className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white">Fale com a gente</a>
+        </nav>
+      </header>
+
+      {/* HERO */}
+      <section className="relative mx-auto max-w-6xl px-6 pt-16 text-center">
+        <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-3 bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent md:text-5xl">Tecnologia que vende</motion.h1>
+        <p className="mx-auto max-w-2xl text-slate-600">Loja virtual completa por assinatura mensal, com implementação profissional, treinamento presencial e contrato claro.</p>
+      </section>
+
+      {/* SEÇÃO PERSUASIVA */}
+      <section className="mx-auto max-w-6xl px-6 py-10">
+        <div className="mx-auto mb-8 max-w-3xl text-center">
+          <h2 className="mb-2 text-2xl font-bold">Enquanto uns esperam o movimento voltar, você continua vendendo</h2>
+          <p className="text-slate-600">Com a loja virtual, seus clientes compram a qualquer hora. Você cuida só do essencial: separar o pedido e mandar entregar.</p>
+        </div>
+        <div className="grid gap-5 md:grid-cols-3">
+          {FEATURES.map((f) => (
+            <FeatureCard key={f.title} icon={f.icon} title={f.title} desc={f.desc} />
+          ))}
+        </div>
+      </section>
+
+      {/* PLANOS */}
+      <section id="loja" className="mx-auto max-w-6xl px-6 py-12">
+        <div className="mx-auto mb-5 max-w-3xl text-center">
+          <h2 className="mb-2 text-2xl font-bold">Loja Virtual por assinatura mensal</h2>
+          <p className="text-slate-600">Uma mensalidade fixa que já inclui tecnologia, implementação completa, treinamento presencial e suporte humanizado. Em caso de atraso, a loja poderá ser suspensa até regularização. Tudo previsto em contrato.</p>
+
+          {/* Seletor de cobrança (logo acima dos planos) */}
+          <div className="mt-5 inline-flex rounded-full border border-white/60 bg-white/80 p-1 shadow backdrop-blur">
+            {["mensal", "trimestral", "anual"].map((b) => (
+              <button key={b} onClick={() => setBilling(b as Billing)} className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${billing === b ? "bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white" : "text-slate-700 hover:text-slate-900"}`}>
+                {b.charAt(0).toUpperCase() + b.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* Essencial */}
+          <PlanCard
+            title="Essencial"
+            highlight={<Badge tone="indigo">Comece agora</Badge>}
+            price={`${prices.essencial}`}
+            cta="Assinar Essencial"
+            bullets={[
+              <CheckItem key="e1">Construção da loja (layout, pagamentos, frete, domínio + SSL)</CheckItem>,
+              <CheckItem key="e2">Cadastro inicial de até <strong>20 produtos</strong> (máx. 500)</CheckItem>,
+              <CheckItem key="e3">Páginas institucionais (Políticas, Trocas, LGPD, Sobre)</CheckItem>,
+              <CheckItem key="e4">Integrações básicas (GA4, Pixel, Instagram, TikTok)</CheckItem>,
+              <CheckItem key="e5">1 treinamento presencial (2h)</CheckItem>,
+              <CheckItem key="e6">1 atualização de banner/mês</CheckItem>,
+              <CheckItem key="e7">Integração com Google Meu Negócio (conta existente)</CheckItem>,
+              <CheckItem key="e8">Suporte via WhatsApp (horário comercial)</CheckItem>,
+              <CheckItem key="e9">Planejamento de conteúdo (Instagram)</CheckItem>,
+              <CheckItem key="e10">Vídeos curtos: 2 Reels/mês (ideia + edição)</CheckItem>,
+            ]}
+          />
+
+          {/* Avançado */}
+          <PlanCard
+            title="Avançado"
+            highlight={<Badge tone="emerald">Mais autonomia</Badge>}
+            price={`${prices.avancado}`}
+            cta="Assinar Avançado"
+            bullets={[
+              <CheckItem key="a1">Tudo do Essencial +</CheckItem>,
+              <CheckItem key="a2">Cadastro inicial de até <strong>25 produtos</strong> (máx. 500)</CheckItem>,
+              <CheckItem key="a3">2 treinamentos presenciais (2h cada)</CheckItem>,
+              <CheckItem key="a4">4 atualizações de banner/mês</CheckItem>,
+              <CheckItem key="a5">Integração com Google Meu Negócio (conta existente)</CheckItem>,
+              <CheckItem key="a6">Planejamento de conteúdo (Instagram)</CheckItem>,
+              <CheckItem key="a7">Planejamento de ações presenciais</CheckItem>,
+              <CheckItem key="a8">Vídeos curtos: 4 Reels/mês (ideia + edição)</CheckItem>,
+            ]}
+          />
+
+          {/* Premium */}
+          <PlanCard
+            title="Premium"
+            highlight={<Badge tone="purple">Completo</Badge>}
+            price={`${prices.premium}`}
+            cta="Assinar Premium"
+            bullets={[
+              <CheckItem key="p1">Tudo do Avançado +</CheckItem>,
+              <CheckItem key="p2">Cadastro inicial de até <strong>30 produtos</strong> (máx. 500)</CheckItem>,
+              <CheckItem key="p3">4 treinamentos presenciais (2h cada)</CheckItem>,
+              <CheckItem key="p4">8 atualizações de banner/mês</CheckItem>,
+              <CheckItem key="p5">Integração com Google Meu Negócio (conta existente)</CheckItem>,
+              <CheckItem key="p6">Planejamento de conteúdo (Instagram)</CheckItem>,
+              <CheckItem key="p7">Planejamento de ações presenciais</CheckItem>,
+              <CheckItem key="p8">Vídeos curtos: 8 Reels/mês (ideia + edição)</CheckItem>,
+              <CheckItem key="p9"><strong>Bônus:</strong> Consultoria estratégica trimestral</CheckItem>,
+            ]}
+          />
+        </div>
+
+        {/* Observações de cobrança */}
+        <div className="mt-6 space-y-1 text-center text-xs text-slate-500">
+          <p>Planos flexíveis com <strong>cobrança via contrato</strong>, sem <strong>taxas ocultas</strong> e sem necessidade de cartão de crédito.</p>
+          <p>Cobrança com <strong>contrato</strong>. Nos planos <strong>trimestral</strong> e <strong>anual</strong> não há pagamento à vista: são parcelas mensais via contrato.</p>
+        </div>
+      </section>
+
+      {/* Comparativo resumido */}
+      <section className="mx-auto max-w-6xl px-6 pb-10">
+        <h3 className="mb-4 text-xl font-bold">Comparativo de recursos</h3>
+        <div className="overflow-x-auto rounded-2xl border border-white/70 bg-white/80 shadow-sm backdrop-blur">
+          <table className="min-w-full text-left text-sm text-slate-700">
+            <thead>
+              <tr className="bg-slate-50/70 text-slate-900">
+                <th className="px-4 py-3">Recurso</th>
+                <th className="px-4 py-3">Essencial</th>
+                <th className="px-4 py-3">Avançado</th>
+                <th className="px-4 py-3">Premium</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { r: "Cadastro inicial (itens)", e: "20", a: "25", p: "30" },
+                { r: "Controle de estoque e pedidos", e: "Sim", a: "Sim", p: "Sim" },
+                { r: "Páginas institucionais", e: "Sim", a: "Sim", p: "Sim" },
+                { r: "Versão mobile automática", e: "Sim", a: "Sim", p: "Sim" },
+                { r: "Integrações básicas (GA4, Pixel, Instagram, TikTok)", e: "Sim", a: "Sim", p: "Sim" },
+                { r: "Treinamento presencial (sessões)", e: "1", a: "2", p: "4" },
+                { r: "Atualizações de banners/mês", e: "1", a: "4", p: "8" },
+                { r: "Google Meu Negócio", e: "Integração", a: "Integração", p: "Integração" },
+              ].map((row) => (
+                <tr key={row.r} className="border-t border-slate-200/70">
+                  <td className="px-4 py-3 text-slate-800">{row.r}</td>
+                  <td className="px-4 py-3">{row.e}</td>
+                  <td className="px-4 py-3">{row.a}</td>
+                  <td className="px-4 py-3">{row.p}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* FAQ (inserido logo abaixo da tabela) */}
+      <section className="bg-gradient-to-b from-white to-gray-50 py-16" id="faq">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold mb-10 text-gray-800">Dúvidas Frequentes</h2>
+          <div className="space-y-4 text-left">
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Como funciona a assinatura mensal?</summary><p className="mt-2 text-gray-600">A assinatura é cobrada mensalmente, com o valor fixo do plano escolhido. O pagamento garante o funcionamento da loja, hospedagem, suporte, atualizações e manutenção contínua.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Posso cancelar quando quiser?</summary><p className="mt-2 text-gray-600">Sim. O cancelamento pode ser solicitado a qualquer momento com 15 dias de antecedência, por escrito. A loja é desativada no final do ciclo já pago.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">O que acontece se eu atrasar o pagamento?</summary><p className="mt-2 text-gray-600">A loja pode ser temporariamente suspensa até a regularização. Todos os dados são preservados e o acesso é restaurado assim que o pagamento é confirmado.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Há taxa de ativação ou custo inicial além da mensalidade?</summary><p className="mt-2 text-gray-600">Não. A mensalidade já cobre a construção inicial da loja, conforme os itens do plano contratado.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">O preço da mensalidade muda com o tempo?</summary><p className="mt-2 text-gray-600">O valor é fixo por 12 meses. Após esse período, poderá haver reajuste com aviso prévio, seguindo a atualização da nossa tabela de serviços.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Em quanto tempo a loja fica pronta?</summary><p className="mt-2 text-gray-600">O prazo médio de ativação é de 7 a 15 dias úteis após o envio completo das informações solicitadas no questionário inicial.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Eu preciso ter domínio próprio?</summary><p className="mt-2 text-gray-600">Não é obrigatório. Podemos incluir e configurar um domínio para você. Se já possuir um domínio, faremos a configuração sem custo adicional.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">A hospedagem e o SSL estão inclusos?</summary><p className="mt-2 text-gray-600">Sim. Todos os planos incluem hospedagem profissional e certificado SSL (navegação segura “https”).</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Posso migrar minha loja atual?</summary><p className="mt-2 text-gray-600">Sim. Realizamos migração mediante análise de compatibilidade. Se houver necessidades específicas, poderemos apresentar orçamento adicional.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">A loja é personalizada com minha identidade visual?</summary><p className="mt-2 text-gray-600">Sim. Aplicamos suas cores, logotipo e estilo de marca mantendo a base técnica e componentes profissionais do sistema.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">É possível adicionar ou remover produtos depois?</summary><p className="mt-2 text-gray-600">Sim. Você terá acesso administrativo para cadastrar, editar e excluir produtos a qualquer momento.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Posso alterar layout, banners ou páginas após a entrega?</summary><p className="mt-2 text-gray-600">Sim. Cada plano inclui um número de atualizações mensais. Pedidos além desse limite podem ser contratados como hora extra conforme o SLA do plano.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Vocês configuram as páginas de políticas (Trocas, LGPD etc.)?</summary><p className="mt-2 text-gray-600">Sim. Entregamos páginas institucionais básicas com textos padrão que podem ser ajustados às suas regras internas.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Há treinamento incluso?</summary><p className="mt-2 text-gray-600">Sim. Todos os planos incluem treinamento (presencial ou online) e suporte via WhatsApp em horário comercial.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">O suporte é técnico ou também ajuda no marketing?</summary><p className="mt-2 text-gray-600">No plano Essencial o foco é técnico. Os planos Avançado e Premium incluem treinamentos e direcionamento estratégico de marketing.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">O que é SLA de suporte de 4h úteis?</summary><p className="mt-2 text-gray-600">É o tempo máximo para retorno de chamados técnicos no plano Premium, garantindo prioridade no atendimento.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Vocês atualizam o site automaticamente?</summary><p className="mt-2 text-gray-600">Sim. Atualizações de segurança e sistema são aplicadas por nós. Mudanças visuais seguem o calendário e limites do plano.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">O que está incluso no planejamento de conteúdo do Instagram?</summary><p className="mt-2 text-gray-600">Inclui calendário editorial, pautas, legendas e cronograma mensal conforme o número de posts do seu plano.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Vocês também fazem as postagens no Instagram?</summary><p className="mt-2 text-gray-600">Sim, mediante aprovação prévia dos materiais. Se preferir, enviamos os arquivos para postagem manual pela sua equipe.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Os vídeos são gravados por vocês?</summary><p className="mt-2 text-gray-600">Sim. Para clientes locais, gravamos presencialmente. Para outras regiões, orientamos a captação e fazemos a edição.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Posso escolher os temas dos Reels e vídeos?</summary><p className="mt-2 text-gray-600">Sim. Definimos juntos no planejamento mensal, considerando público, oferta e objetivos do negócio.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">A loja integra com Google e redes sociais?</summary><p className="mt-2 text-gray-600">Sim. Integramos Google Analytics 4, Meta Pixel, Instagram e TikTok. No Avançado e Premium, configuramos também Google Meu Negócio completo.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Consigo acompanhar as métricas da loja?</summary><p className="mt-2 text-gray-600">Sim. Você terá acesso a relatórios de desempenho (vendas, visitas, produtos mais acessados, funil etc.).</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Posso conectar com ERP/controle de estoque (ex.: Bling)?</summary><p className="mt-2 text-gray-600">Sim, desde que o ERP possua integração compatível. Fazemos a configuração mediante análise e, se necessário, orçamento adicional.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Posso mudar de plano depois?</summary><p className="mt-2 text-gray-600">Sim. É possível fazer upgrade ou downgrade a qualquer momento, conforme sua necessidade de recursos e volume de vendas.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Perco alguma coisa ao mudar de plano?</summary><p className="mt-2 text-gray-600">Não. Seu histórico, produtos e configurações permanecem. Apenas os benefícios ativos mudam conforme o novo plano.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Posso solicitar serviços adicionais fora do plano?</summary><p className="mt-2 text-gray-600">Sim. Serviços extras podem ser contratados sob demanda, com orçamento separado.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">Vocês garantem vendas?</summary><p className="mt-2 text-gray-600">Não é possível garantir vendas, pois dependem de fatores externos (produto, preço, público, oferta). Fornecemos base técnica e estratégica para maximizar resultados.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">O site fica no meu nome?</summary><p className="mt-2 text-gray-600">Sim. O domínio e a loja são vinculados à sua marca. Em caso de encerramento de contrato, você pode solicitar a migração dos arquivos/dados.</p></details>
+            <details className="bg-white shadow-sm rounded-2xl p-6 transition hover:shadow-md"><summary className="font-semibold text-lg cursor-pointer text-gray-800">É possível adicionar outros idiomas ou moedas?</summary><p className="mt-2 text-gray-600">Sim, mediante viabilidade técnica da plataforma e integrações necessárias. Nesses casos, apresentamos um orçamento complementar.</p></details>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section id="cta" className="mx-auto max-w-6xl px-6 pb-20">
+        <div className="rounded-3xl border border-white/60 bg-white/80 p-8 text-center shadow-xl backdrop-blur">
+          <h3 className="mb-2 text-2xl font-bold">Pronta para começar?</h3>
+          <p className="mb-5 text-slate-600">Fale com a gente e escolha a opção ideal para seu momento.</p>
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <a href="https://wa.me/5599999999999" className="rounded-2xl bg-emerald-600 px-7 py-3 font-medium text-white shadow hover:bg-emerald-700">WhatsApp</a>
+            <a href="#loja" className="rounded-2xl border border-white/70 bg-white/70 px-7 py-3 font-medium text-slate-800 shadow-sm backdrop-blur hover:bg-white/90">Ver planos</a>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-white/60 bg-slate-50 py-8 text-center text-xs text-slate-500">© {new Date().getFullYear()} Contratação Digital — Todos os direitos reservados.</footer>
+    </div>
+  );
+}
