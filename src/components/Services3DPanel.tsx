@@ -26,13 +26,13 @@ function useIsDesktop(minWidth = 1024) {
 
 export default function Services3DPanel({
   // presets “perto, seguro”
-  mobileNudgeY = -8,       // sobe no mobile
-  desktopNudgeY = -4,      // sobe no desktop
+  mobileNudgeY = -8,
+  desktopNudgeY = -4,
   mobileNudgeX = 0,
   desktopNudgeX = 0,
-  ringSizeMobile = 300,    // menor no mobile
+  ringSizeMobile = 300,
   ringSizeDesktop = 440,
-  translateZMobile = 190,  // raio um pouco menor no mobile
+  translateZMobile = 190,
   translateZDesktop = 260,
 }: Services3DPanelProps) {
   const [selected, setSelected] = useState<any>(null);
@@ -52,7 +52,14 @@ export default function Services3DPanel({
   return (
     <section
       id="servicos"
-      className="relative w-full min-h-[90vh] overflow-hidden text-gray-700 flex flex-col lg:flex-row items-center justify-start gap-8 px-6 pt-6 pb-14 scroll-mt-24"
+      className={[
+        "relative w-full overflow-hidden text-gray-700",
+        "flex flex-col lg:flex-row items-center justify-start gap-8 px-6 pt-6",
+        // ↓ compacto por padrão, expande quando selecionado
+        selected ? "pb-14" : "pb-6",
+        selected ? "min-h-[92vh]" : "min-h-[58vh]",
+        "scroll-mt-24",
+      ].join(" ")}
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden="true" />
 
@@ -64,12 +71,11 @@ export default function Services3DPanel({
         <p className="mt-1 text-gray-500">Clique em um card para ver os detalhes</p>
       </div>
 
-      {/* Carrossel 3D: agora encosta no topo */}
+      {/* Carrossel 3D encostado no topo */}
       <div
         className="relative flex-1"
         style={{
-          // empurra em relação ao topo do section
-          marginTop: `calc(2.75rem + ${nudgeY}px)`, // ~altura do título/sub + ajuste
+          marginTop: `calc(2.75rem + ${nudgeY}px)`, // altura do título/sub + ajuste
           marginLeft: nudgeX,
         }}
       >
@@ -100,41 +106,49 @@ export default function Services3DPanel({
         </div>
       </div>
 
-      <AnimatePresence>
+      {/* Painel de detalhes: colapsado por padrão, expande ao abrir */}
+      <AnimatePresence initial={false}>
         {selected && (
           <motion.div
             key={selected.key}
-            initial={{ opacity: 0, x: 80 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 80 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="relative flex-1 max-w-2xl p-4 sm:p-6 lg:p-8"
+            className="relative flex-1 max-w-2xl"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
           >
-            <button
-              onClick={() => setSelected(null)}
-              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 text-gray-400 hover:text-gray-600"
-              aria-label="Fechar"
-            >
-              ✕
-            </button>
+            <div className="relative p-4 sm:p-6 lg:p-8">
+              <button
+                onClick={() => setSelected(null)}
+                className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 text-gray-400 hover:text-gray-600"
+                aria-label="Fechar"
+              >
+                ✕
+              </button>
 
-            <div className="mb-6">
-              <h3 className="silver-kinetic text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-                {selected.title}
-              </h3>
+              <div className="mb-6">
+                <h3 className="silver-kinetic text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
+                  {selected.title}
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
+                {selected.services.map((svc: string) => (
+                  <div
+                    key={svc}
+                    className="relative rounded-2xl border border-white/50 bg-white/60 backdrop-blur-xl px-5 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_18px_60px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-0.5"
+                  >
+                    <span className="relative z-10 text-sm sm:text-base font-semibold uppercase text-gray-700 tracking-wide">
+                      {svc}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {selected.desc && (
+                <p className="mt-4 text-sm text-gray-500">{selected.desc}</p>
+              )}
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
-              {selected.services.map((svc: string) => (
-                <div key={svc} className="relative rounded-2xl border border-white/50 bg-white/60 backdrop-blur-xl px-5 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_18px_60px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-0.5">
-                  <span className="relative z-10 text-sm sm:text-base font-semibold uppercase text-gray-700 tracking-wide">
-                    {svc}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {selected.desc && <p className="mt-4 text-sm text-gray-500">{selected.desc}</p>}
           </motion.div>
         )}
       </AnimatePresence>
