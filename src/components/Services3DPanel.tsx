@@ -44,7 +44,7 @@ export default function Services3DPanel() {
   ];
 
   return (
-    <section id="servicos" className="relative w-full text-gray-700 px-6 py-16 scroll-mt-24">
+    <section id="servicos" className="relative w-full scroll-mt-24 px-6 py-16 text-gray-700">
       {/* Título */}
       <div className="w-full text-center mb-8">
         <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
@@ -55,14 +55,24 @@ export default function Services3DPanel() {
         </p>
       </div>
 
-      {/* PALCO CENTRAL (carrossel exatamente no meio da seção) */}
-      <div className="relative mx-auto max-w-6xl">
-        <div className="min-h-[520px] sm:min-h-[560px] lg:min-h-[600px] grid place-items-center">
-          <div className="relative [perspective:1600px] h-[340px] w-[340px] sm:h-[380px] sm:w-[380px] md:h-[420px] md:w-[420px]">
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ transformStyle: "preserve-3d" }}>
+      {/* PALCO: altura e centralização garantidas */}
+      <div className="relative mx-auto max-w-6xl overflow-visible">
+        {/* 
+          Ajuste AQUI a altura do palco (h-[])
+          Isso mantém o anel sempre visível e centralizado verticalmente
+        */}
+        <div className="relative h-[440px] sm:h-[500px] lg:h-[540px] grid place-items-center overflow-visible">
+          {/* Wrapper com perspectiva */}
+          <div className="relative h-[360px] w-[360px] sm:h-[400px] sm:w-[400px] md:h-[420px] md:w-[420px] [perspective:1600px] overflow-visible">
+            {/* Centro exato do anel */}
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+              style={{ transformStyle: "preserve-3d" }}
+            >
               {items.map((it, i) => {
                 const angle = (360 / items.length) * i;
                 const isActive = selected?.key === it.key;
+
                 return (
                   <div
                     key={it.key}
@@ -70,13 +80,14 @@ export default function Services3DPanel() {
                       isActive ? "scale-110 brightness-110 animate-float" : "hover:scale-105"
                     }`}
                     style={{
-                      transform: `rotateY(${angle}deg) translateZ(260px)`,
+                      // RAIO DO ANEL → translateZ
+                      transform: `rotateY(${angle}deg) translateZ(240px)`,
                       transformStyle: "preserve-3d",
                     }}
                     onClick={() => setSelected(it)}
                     aria-label={`Selecionar ${it.title}`}
                   >
-                    <div className="relative h-[240px] w-[190px] sm:h-[260px] sm:w-[200px] rounded-3xl border border-white/40 backdrop-blur-2xl bg-white/70 shadow-[0_10px_60px_rgba(0,0,0,0.08)] overflow-hidden">
+                    <div className="relative h-[230px] w-[180px] sm:h-[250px] sm:w-[190px] rounded-3xl border border-white/40 backdrop-blur-2xl bg-white/70 shadow-[0_10px_60px_rgba(0,0,0,0.08)] overflow-hidden">
                       <img
                         src={it.img}
                         alt={it.title}
@@ -90,7 +101,7 @@ export default function Services3DPanel() {
           </div>
         </div>
 
-        {/* DETALHES (sempre abaixo, desktop e mobile) */}
+        {/* DETALHES: sempre ABAIXO (desktop e mobile) */}
         <AnimatePresence mode="wait">
           {selected && (
             <motion.div
@@ -136,7 +147,7 @@ export default function Services3DPanel() {
         </AnimatePresence>
       </div>
 
-      {/* Efeitos simples usados no anel */}
+      {/* Flutuação sutil quando selecionado */}
       <style>{`
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         .animate-float { animation: float 3s ease-in-out infinite; }
