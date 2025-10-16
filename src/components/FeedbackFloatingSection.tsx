@@ -19,7 +19,6 @@ export default function FeedbackFloatingSection() {
     { id: 'guilherme', type: 'stars', author: 'Guilherme Gonçalves (Local Guide)', aspect: 'Avaliação 5★', stars: 5 },
   ];
 
-  // posições do layout antigo (desktop)
   const spots = [
     { top: '10%', left: '8%' },  { top: '14%', left: '36%' }, { top: '16%', left: '66%' },
     { top: '28%', left: '20%' }, { top: '30%', left: '50%' }, { top: '32%', left: '78%' },
@@ -29,82 +28,45 @@ export default function FeedbackFloatingSection() {
   ];
 
   return (
-    <section id="feedbacks" className="relative w-full bg-white scroll-mt-24">
-      {/* Título */}
-      <h2 className="text-center silver-kinetic text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight pt-16">
-        Feedbacks e Resultados
-      </h2>
+    <section id="feedbacks" className="relative w-full min-h-[110vh] bg-white flex flex-col items-center justify-center overflow-hidden px-6 py-24 scroll-mt-24">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -inset-24 blur-3xl opacity-30 bg-gradient-to-tr from-gray-200 via-gray-100 to-white animate-pulse" />
+      </div>
 
-      {/* ✅ MOBILE: lista com snap/efeito suave */}
-      <div className="sm:hidden relative mt-6 pb-16">
-        <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute -inset-24 blur-3xl opacity-30 bg-gradient-to-tr from-gray-200 via-gray-100 to-white animate-pulse" />
-        </div>
+      <h2 className="relative z-10 text-center silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-10">Feedbacks e Resultados</h2>
 
-        <div className="h-[78vh] overflow-y-auto px-4 snap-y snap-mandatory space-y-5 no-scrollbar">
-          {feedbacks.map((f, i) => (
-            <motion.article
+      <div className="absolute inset-0">
+        {feedbacks.map((f, i) => {
+          const spot = spots[i % spots.length];
+          const delay = (i % 6) * 0.18;
+          const duration = 6.5 + (i % 5);
+          return (
+            <motion.div
               key={f.id}
-              initial={{ opacity: 0.6, scale: 0.96, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ amount: 0.65, once: false }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="snap-center rounded-3xl border border-white/50 bg-white/85 backdrop-blur shadow-[0_10px_40px_rgba(0,0,0,0.08)] p-4"
+              drag
+              dragElastic={0.12}
+              dragMomentum={false}
+              dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut', delay } }}
+              viewport={{ once: true, margin: '-10% 0px -10% 0px' }}
+              className="absolute w-[260px] sm:w-[320px] cursor-grab active:cursor-grabbing rounded-3xl border border-white/40 backdrop-blur-2xl bg-white/70 shadow-[0_10px_60px_rgba(0,0,0,0.08)] p-4 transition-transform duration-300 ease-out hover:scale-[1.03]"
+              style={{ top: `min(${spot.top}, 88%)`, left: spot.left }}
+              animate={{ y: [0, -10, 0], transition: { duration, repeat: Infinity, ease: 'easeInOut' } }}
             >
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800 text-base pr-2">{f.author}</h3>
-                <span className="text-yellow-400 text-sm">{'★'.repeat(Math.max(0, Math.min(5, f.stars || 5)))}</span>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-gray-700 text-sm sm:text-base truncate pr-2">{f.author}</h3>
+                <span className="text-yellow-400 whitespace-nowrap">{'★'.repeat(Math.max(0, Math.min(5, f.stars || 5)))}</span>
               </div>
-              <p className="mt-2 text-gray-600 text-[15px] leading-snug">
-                {f.type === "text" ? f.text : f.aspect}
-              </p>
-            </motion.article>
-          ))}
-        </div>
+              {f.type === 'text' ? (
+                <p className="text-gray-600 text-sm sm:text-[15px] leading-snug">{f.text}</p>
+              ) : (
+                <p className="text-gray-600 text-sm sm:text-[15px] leading-snug">{f.aspect}</p>
+              )}
+            </motion.div>
+          );
+        })}
       </div>
-
-      {/* 💠 DESKTOP: mantém os cards flutuantes/arrastáveis */}
-      <div className="hidden sm:block relative w-full min-h-[110vh] overflow-hidden py-24">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -inset-24 blur-3xl opacity-30 bg-gradient-to-tr from-gray-200 via-gray-100 to-white animate-pulse" />
-        </div>
-
-        <div className="absolute inset-0">
-          {feedbacks.map((f, i) => {
-            const spot = spots[i % spots.length];
-            const delay = (i % 6) * 0.18;
-            const duration = 6.5 + (i % 5);
-            return (
-              <motion.div
-                key={f.id}
-                drag
-                dragElastic={0.12}
-                dragMomentum={false}
-                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut', delay } }}
-                viewport={{ once: true, margin: '-10% 0px -10% 0px' }}
-                className="absolute w-[320px] cursor-grab active:cursor-grabbing rounded-3xl border border-white/40 backdrop-blur-2xl bg-white/70 shadow-[0_10px_60px_rgba(0,0,0,0.08)] p-4 hover:scale-[1.03] transition"
-                style={{ top: `min(${spot.top}, 88%)`, left: spot.left }}
-                animate={{ y: [0, -10, 0], transition: { duration, repeat: Infinity, ease: 'easeInOut' } }}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-gray-700 text-base truncate pr-2">{f.author}</h3>
-                  <span className="text-yellow-400 whitespace-nowrap">{'★'.repeat(Math.max(0, Math.min(5, f.stars || 5)))}</span>
-                </div>
-                <p className="text-gray-600 text-[15px] leading-snug">
-                  {f.type === "text" ? f.text : f.aspect}
-                </p>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
     </section>
   );
 }
