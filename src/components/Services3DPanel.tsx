@@ -10,10 +10,6 @@ type Item = {
 };
 
 export default function Services3DPanel() {
-  const [selected, setSelected] = useState<Item | null>(null);
-  const [rot, setRot] = useState(0);          // rotação contínua do anel (deg)
-  const rafRef = useRef<number | null>(null);
-
   const items: Item[] = [
     {
       key: "design",
@@ -34,163 +30,212 @@ export default function Services3DPanel() {
       title: "DESENVOLVIMENTO DE SISTEMAS",
       desc: "Sites e sistemas sob medida, com foco em eficiência.",
       img: "https://i.imgur.com/9PFreUn.png",
-      services: [
-        "LANDING PAGES",
-        "SITES",
-        "E-COMMERCE",
-        "DASHBOARDS",
-        "SaaS SOB DEMANDA",
-      ],
+      services: ["LANDING PAGES", "SITES", "E-COMMERCE", "DASHBOARDS", "SaaS SOB DEMANDA"],
     },
     {
       key: "mkt",
       title: "MARKETING",
       desc: "Crescimento orientado a dados e presença relevante.",
       img: "https://i.imgur.com/itAZ9xR.png",
-      services: [
-        "GESTÃO DE REDES",
-        "TRÁFEGO PAGO",
-        "GOOGLE MEU NEGÓCIO",
-        "FUNIS",
-        "CONSULTORIA",
-      ],
+      services: ["GESTÃO DE REDES", "TRÁFEGO PAGO", "GOOGLE MEU NEGÓCIO", "FUNIS", "CONSULTORIA"],
     },
   ];
 
-  /** Gira automaticamente quando NÃO há painel aberto */
+  const [selected, setSelected] = useState<Item | null>(null);
+  const [angle, setAngle] = useState(0); // ângulo base do carrossel
+  const rafRef = useRef<number | null>(null);
+  const lastRef = useRef<number | null>(null);
+
+  // auto-rotação quando NENHUM card está selecionado
   useEffect(() => {
-    if (selected) return; // pausado quando houver seleção
-    const step = () => {
-      setRot((r) => (r + 0.25) % 360); // velocidade da rotação
-      rafRef.current = requestAnimationFrame(step);
-    };
-    rafRef.current = requestAnimationFrame(step);
+    function loop(t: number) {
+      if (lastRef.current == null) lastRef.current = t;
+      const dt = (t - lastRef.current) / 1000;
+      lastRef.current = t;
+
+      // 12° por segundo — suave
+      setAngle((a) => a + (selected ? 0 : 12 * dt));
+      rafRef.current = requestAnimationFrame(loop);
+    }
+    rafRef.current = requestAnimationFrame(loop);
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      lastRef.current = null;
     };
   }, [selected]);
 
-  /** Fechar com ESC */
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelected(null);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  // medidas responsivas do carrossel
+  // (desktop maior, mobile menor)
+  const radius = 260; // distância Z (desktop)
+  const radiusSm = 200; // mobile
+  const cardW = 210;
+  const cardH = 270;
 
-  /** Tamanhos responsivos do anel */
-  const sizeClass =
-    "h-[340px] w-[340px] sm:h-[380px] sm:w-[380px] md:h-[420px] md:w-[420px]";
+  // estilo do reflexo (usa mask para fade)
+  const reflectionMask: React.CSSProperties = {
+    transform: "scaleY(-1)",
+    WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,0))",
+    maskImage: "linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,0))",
+    opacity: 0.25,
+  };
+
+  // leve textura nas laterais do card
+  const patternedBg =
+    "linear-gradient(to right, rgba(0,0,0,0.06) 0 14%, transparent 14% 86%, rgba(0,0,0,0.06) 86% 100%), radial-gradient(1200px 180px at 50% -20%, rgba(255,255,255,0.9), rgba(255,255,255,0.55) 60%, rgba(255,255,255,0.35))";
+
+  const CircleCards = ({ small = false }: { small?: boolean }) => {
+    const n = items.length;
+    const R = small ? radiusSm : radius;
+
+    return (
+      <div
+        className="relative select-none"
+        style={{
+          perspective: small ? 1200 : 1600,
+          width: small ? 360 : 460,
+          height: small ? 360 : 460,
+        }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          {items.map((it, i) => {
+            // ângulo ao redor do círculo
+            const a = angle + (360 / n) * i;
+            // mantém o card "virado" para a câmera (desfaz o rotateY)
+            const transform = `rotateY(${a}deg) translateZ(${R}px) rotateY(${-a}deg)`;
+
+            const isActive = selected?.key === it.key;
+
+            return (
+              <button
+                key={it.key}
+                onClick={() => setSelected(it)}
+                aria-label={`Selecionar ${it.title}`}
+                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-500 ${
+                  isActive ? "scale-[1.06] brightness-110" : "hover:scale-[1.03]"
+                }`}
+                style={{ transform, transformStyle: "preserve-3d" }}
+              >
+                {/* CARD */}
+                <div
+                  className="relative rounded-3xl border border-white/60 shadow-[0_20px_80px_rgba(0,0,0,.10)] backdrop-blur"
+                  style={{
+                    width: small ? cardW - 20 : cardW,
+                    height: small ? cardH - 20 : cardH,
+                    backgroundImage: patternedBg,
+                    backgroundColor: "rgba(255,255,255,.75)",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
+                    src={it.img}
+                    alt={it.title}
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24 object-contain filter grayscale drop-shadow-[0_2px_6px_rgba(255,255,255,.8)]"
+                  />
+                </div>
+
+                {/* REFLEXO */}
+                <div
+                  className="relative mt-2 rounded-3xl border border-white/40 shadow-[0_6px_40px_rgba(0,0,0,.08)]"
+                  style={{
+                    width: small ? cardW - 20 : cardW,
+                    height: (small ? cardH - 20 : cardH) * 0.9,
+                    backgroundImage: patternedBg,
+                    backgroundColor: "rgba(255,255,255,.75)",
+                    ...reflectionMask,
+                  }}
+                >
+                  <img
+                    src={it.img}
+                    alt=""
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24 object-contain filter grayscale drop-shadow-[0_2px_6px_rgba(255,255,255,.8)]"
+                    aria-hidden
+                  />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <section
       id="servicos"
-      className="relative w-full text-gray-700 px-6 pt-10 pb-24 scroll-mt-24"
+      className="relative w-full text-gray-700 px-6 py-16 sm:py-20 scroll-mt-24"
     >
-      <div className="w-full text-center mb-2 sm:mb-4">
+      <div className="w-full text-center mb-2">
         <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
           SERVIÇOS
         </h2>
-        <p className="mt-2 text-gray-500">Clique em um card para ver os detalhes</p>
+        <p className="text-gray-500 text-sm sm:text-base mt-1">
+          Clique em um card para ver os detalhes
+        </p>
       </div>
 
-      {/* Layout: mobile empilha; desktop 2 colunas (carrossel | painel) */}
-      <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
-        {/* Carrossel 3D */}
-        <div
-          className={[
-            "relative flex justify-center",           // sempre central no mobile
-            "transition-transform duration-700",      // anima quando desloca
-            selected ? "lg:justify-start lg:-translate-x-6" : "lg:justify-center lg:translate-x-0",
-          ].join(" ")}
-        >
-          <div className={`relative [perspective:1600px] ${sizeClass} overflow-visible z-0`}>
-            <div
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-              // o "ring3d" agora é só visual; a rotação contínua é aplicada nos cards
-            >
-              {items.map((it, i) => {
-                const base = (360 / items.length) * i;
-                const angle = base + rot;
-                const isActive = selected?.key === it.key;
-
-                return (
-                  <div
-                    key={it.key}
-                    className={[
-                      "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
-                      "[transform-style:preserve-3d] cursor-pointer transition-transform duration-500",
-                      isActive ? "scale-110 brightness-110" : "hover:scale-105",
-                    ].join(" ")}
-                    style={{
-                      transform: `rotateY(${angle}deg) translateZ(260px)`,
-                    }}
-                    onClick={() =>
-                      setSelected((curr) => (curr?.key === it.key ? null : it))
-                    }
-                    aria-label={`Selecionar ${it.title}`}
-                    role="button"
-                    aria-pressed={isActive}
-                  >
-                    <div className="relative h-[240px] w-[190px] sm:h-[260px] sm:w-[200px] rounded-3xl border border-white/40 backdrop-blur-2xl bg-gradient-radial from-white/70 via-white/30 to-transparent shadow-[0_10px_60px_rgba(0,0,0,0.08)] overflow-hidden">
-                      <img
-                        src={it.img}
-                        alt={it.title}
-                        className="h-24 w-24 sm:h-28 sm:w-28 object-contain [filter:grayscale(100%)] drop-shadow-[0_2px_6px_rgba(255,255,255,0.8)] mx-auto mt-14 sm:mt-16"
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+      {/* GRID: desktop lado-a-lado; mobile empilhado */}
+      <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 items-center gap-10 lg:gap-12">
+        {/* Coluna do CARROSSEL */}
+        <div className="flex justify-center">
+          {/* Quando há seleção, a coluna fica “fixa”; sem seleção, fica central girando */}
+          <div className={`transition-transform duration-500 ${selected ? "" : ""}`}>
+            {/* mobile usa versão small, desktop a grande */}
+            <div className="block lg:hidden">
+              <CircleCards small />
+            </div>
+            <div className="hidden lg:block">
+              <CircleCards />
             </div>
           </div>
         </div>
 
-        {/* Painel (desktop: ao lado; mobile: abaixo). Aparece só quando selecionado */}
-        <AnimatePresence mode="popLayout">
-          {selected && (
-            <motion.div
-              key={selected.key}
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 40 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-              className="relative max-w-2xl mx-auto lg:mx-0"
-            >
-              <button
-                onClick={() => setSelected(null)}
-                className="absolute top-2 right-2 z-10 text-gray-400 hover:text-gray-600"
-                aria-label="Fechar detalhes"
+        {/* Coluna do PAINEL (aparece só com seleção; some e volta a girar) */}
+        <div className="min-h-[280px]">
+          <AnimatePresence mode="wait">
+            {selected && (
+              <motion.div
+                key={selected.key}
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 40 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="relative max-w-2xl mx-auto lg:mx-0"
               >
-                ✕
-              </button>
+                {/* Fechar */}
+                <button
+                  onClick={() => setSelected(null)}
+                  className="absolute -top-2 -right-2 lg:top-0 lg:right-0 rounded-full bg-white/90 border border-white/60 px-3 py-1 shadow hover:bg-white text-gray-600"
+                  aria-label="Fechar detalhes"
+                >
+                  ✕
+                </button>
 
-              <div className="mb-6">
-                <h3 className="silver-kinetic text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">
+                <h3 className="silver-kinetic text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
                   {selected.title}
                 </h3>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
-                {selected.services.map((svc) => (
-                  <div
-                    key={svc}
-                    className="relative rounded-2xl border border-white/50 bg-white/60 backdrop-blur-xl px-5 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_18px_60px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-0.5"
-                  >
-                    <span className="relative z-10 text-sm sm:text-base font-semibold uppercase text-gray-700 tracking-wide">
-                      {svc}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
+                  {selected.services.map((svc) => (
+                    <div
+                      key={svc}
+                      className="rounded-2xl border border-white/50 bg-white/70 backdrop-blur px-5 py-3 shadow-[0_10px_40px_rgba(0,0,0,.06)] hover:shadow-[0_18px_60px_rgba(0,0,0,.08)] transition-all hover:-translate-y-0.5"
+                    >
+                      <span className="text-sm sm:text-base font-semibold uppercase text-gray-700 tracking-wide">
+                        {svc}
+                      </span>
+                    </div>
+                  ))}
+                </div>
 
-              {selected.desc && (
                 <p className="mt-4 text-sm text-gray-500">{selected.desc}</p>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
