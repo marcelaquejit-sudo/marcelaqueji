@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Item = {
@@ -11,6 +11,14 @@ type Item = {
 
 export default function Services3DPanel() {
   const [selected, setSelected] = useState<Item | null>(null);
+  const [rotation, setRotation] = useState(0);          // rotação base do anel
+  const [paused, setPaused] = useState(false);          // pausa quando abre detalhes
+
+  const rafRef = useRef<number | null>(null);
+  const lastTimeRef = useRef<number | null>(null);
+
+  const SPEED = 10; // graus por segundo (ajuste se quiser mais rápido/lento)
+  const RADIUS = 240; // translateZ do anel (ajuste raio do círculo)
 
   const items: Item[] = [
     {
@@ -43,6 +51,38 @@ export default function Services3DPanel() {
     },
   ];
 
+  // loop de rotação contínua
+  useEffect(() => {
+    function tick(t: number) {
+      if (!paused) {
+        if (lastTimeRef.current == null) lastTimeRef.current = t;
+        const dt = (t - lastTimeRef.current) / 1000; // segundos
+        lastTimeRef.current = t;
+        setRotation((r) => (r + SPEED * dt) % 360);
+      } else {
+        // se pausado, reseta o marcador de tempo para não pular na retomada
+        lastTimeRef.current = t;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    }
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      lastTimeRef.current = null;
+    };
+  }, [paused]);
+
+  const handleSelect = (it: Item) => {
+    setSelected(it);
+    setPaused(true);
+  };
+
+  const handleClose = () => {
+    setSelected(null);
+    setPaused(false);
+  };
+
   return (
     <section id="servicos" className="relative w-full scroll-mt-24 px-6 py-16 text-gray-700">
       {/* Título */}
@@ -55,16 +95,12 @@ export default function Services3DPanel() {
         </p>
       </div>
 
-      {/* PALCO: altura e centralização garantidas */}
+      {/* PALCO central, altura fixa para não “sumir” */}
       <div className="relative mx-auto max-w-6xl overflow-visible">
-        {/* 
-          Ajuste AQUI a altura do palco (h-[])
-          Isso mantém o anel sempre visível e centralizado verticalmente
-        */}
         <div className="relative h-[440px] sm:h-[500px] lg:h-[540px] grid place-items-center overflow-visible">
-          {/* Wrapper com perspectiva */}
+          {/* wrapper com perspectiva */}
           <div className="relative h-[360px] w-[360px] sm:h-[400px] sm:w-[400px] md:h-[420px] md:w-[420px] [perspective:1600px] overflow-visible">
-            {/* Centro exato do anel */}
+            {/* centro geométrico do anel */}
             <div
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
               style={{ transformStyle: "preserve-3d" }}
@@ -72,19 +108,20 @@ export default function Services3DPanel() {
               {items.map((it, i) => {
                 const angle = (360 / items.length) * i;
                 const isActive = selected?.key === it.key;
+                // soma rotação base para animar o anel
+                const totalAngle = angle + rotation;
 
                 return (
                   <div
                     key={it.key}
-                    className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-transform duration-700 ${
-                      isActive ? "scale-110 brightness-110 animate-float" : "hover:scale-105"
+                    className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-transform duration-500 ${
+                      isActive ? "scale-110 brightness-110" : "hover:scale-105"
                     }`}
                     style={{
-                      // RAIO DO ANEL → translateZ
-                      transform: `rotateY(${angle}deg) translateZ(240px)`,
+                      transform: `rotateY(${totalAngle}deg) translateZ(${RADIUS}px)`,
                       transformStyle: "preserve-3d",
                     }}
-                    onClick={() => setSelected(it)}
+                    onClick={() => handleSelect(it)}
                     aria-label={`Selecionar ${it.title}`}
                   >
                     <div className="relative h-[230px] w-[180px] sm:h-[250px] sm:w-[190px] rounded-3xl border border-white/40 backdrop-blur-2xl bg-white/70 shadow-[0_10px_60px_rgba(0,0,0,0.08)] overflow-hidden">
@@ -101,7 +138,7 @@ export default function Services3DPanel() {
           </div>
         </div>
 
-        {/* DETALHES: sempre ABAIXO (desktop e mobile) */}
+        {/* DETALHES (abaixo – pausa a rotação enquanto visível) */}
         <AnimatePresence mode="wait">
           {selected && (
             <motion.div
@@ -114,7 +151,7 @@ export default function Services3DPanel() {
             >
               <div className="flex justify-end">
                 <button
-                  onClick={() => setSelected(null)}
+                  onClick={handleClose}
                   className="rounded-md px-3 py-1.5 text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                   aria-label="Fechar detalhes"
                 >
@@ -146,12 +183,6 @@ export default function Services3DPanel() {
           )}
         </AnimatePresence>
       </div>
-
-      {/* Flutuação sutil quando selecionado */}
-      <style>{`
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-      `}</style>
     </section>
   );
 }
