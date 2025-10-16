@@ -1,0 +1,676 @@
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+// ===============================================
+// Google Analytics (injetado no <head>)
+// ===============================================
+function AnalyticsBoot() {
+  React.useEffect(() => {
+    const w = window as any;
+    if (w.gtag) return; // evita duplicar
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-R0HT0KQ6WL';
+    document.head.appendChild(s);
+
+    w.dataLayer = w.dataLayer || [];
+    w.gtag = function(){ w.dataLayer.push(arguments); };
+    w.gtag('js', new Date());
+    w.gtag('config', 'G-R0HT0KQ6WL');
+  }, []);
+  return null;
+}
+
+// ===============================================
+// LAYOUT: MENU (Header) e RODAPÉ (Footer)
+// ===============================================
+export function SiteHeader() {
+  const [open, setOpen] = useState(false);
+  return (
+    <header className="fixed top-0 inset-x-0 z-40">
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="mt-3 rounded-2xl bg-white/80 backdrop-blur border border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.08)] px-4 py-2">
+          <div className="flex items-center justify-between">
+            <a href="#hero" className="silver-kinetic text-lg font-extrabold tracking-tight">MARCELA QUEJI</a>
+            <nav className="hidden md:flex items-center gap-6 text-sm text-gray-700">
+              <a href="#servicos" className="hover:text-gray-900">Serviços</a>
+              <a href="#cases" className="hover:text-gray-900">Cases</a>
+              <a href="#feedbacks" className="hover:text-gray-900">Feedbacks</a>
+              <a href="#sobre" className="hover:text-gray-900">Sobre</a>
+              <a href="#cta" className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-4 py-1.5 font-semibold text-gray-800 shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-white">Contato</a>
+            </nav>
+            <button onClick={() => setOpen(v=>!v)} aria-label="Abrir menu" className="md:hidden rounded-lg border border-gray-200 px-3 py-1 text-gray-700">☰</button>
+          </div>
+          {open && (
+            <div className="md:hidden mt-2 grid gap-2 text-sm text-gray-700">
+              <a onClick={()=>setOpen(false)} href="#servicos" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Serviços</a>
+              <a onClick={()=>setOpen(false)} href="#cases" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Cases</a>
+              <a onClick={()=>setOpen(false)} href="#feedbacks" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Feedbacks</a>
+              <a onClick={()=>setOpen(false)} href="#sobre" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Sobre</a>
+              <a onClick={()=>setOpen(false)} href="#cta" className="block rounded-lg px-3 py-2 bg-white/80 backdrop-blur border border-white/60 font-semibold text-gray-800">Contato</a>
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export function SiteFooter() {
+  return (
+    <footer className="relative bg-white border-t border-gray-100 py-16 px-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-10">
+          <div>
+            <div className="silver-kinetic text-xl font-extrabold">MARCELA QUEJI</div>
+            <p className="text-gray-500 mt-2 max-w-sm">Experiência digital com eficiência — o que há de mais atual aplicado para funcionar melhor.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 text-sm">
+            <div>
+              <div className="font-semibold text-gray-700 mb-2">Mapa</div>
+              <ul className="space-y-1 text-gray-600">
+                <li><a href="#servicos" className="hover:text-gray-900">Serviços</a></li>
+                <li><a href="#cases" className="hover:text-gray-900">Cases</a></li>
+                <li><a href="#feedbacks" className="hover:text-gray-900">Feedbacks</a></li>
+                <li><a href="#sobre" className="hover:text-gray-900">Sobre</a></li>
+                <li><a href="#cta" className="hover:text-gray-900">Contato</a></li>
+              </ul>
+            </div>
+            <div>
+              <div className="font-semibold text-gray-700 mb-2">Contato</div>
+              <ul className="space-y-1 text-gray-600">
+                <li><a href="#cta" className="hover:text-gray-900">Fale comigo</a></li>
+                <li><a href="mailto:contato@example.com" className="hover:text-gray-900">contato@example.com</a></li>
+              </ul>
+            </div>
+            <div>
+              <div className="font-semibold text-gray-700 mb-2">Redes</div>
+              <ul className="space-y-1 text-gray-600">
+                <li><a href="#" className="hover:text-gray-900">Instagram</a></li>
+                <li><a href="#" className="hover:text-gray-900">LinkedIn</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="mt-10 text-xs text-gray-400">© {new Date().getFullYear()} Marcela Queji. Todos os direitos reservados.</div>
+      </div>
+    </footer>
+  );
+}
+
+// ===============================================
+// HERO
+// ===============================================
+export function HeroKinetic() {
+  return (
+    <section id="hero" className="relative min-h-[70vh] w-full bg-white text-gray-700 flex items-center overflow-hidden scroll-mt-24">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -inset-24 blur-3xl opacity-40 bg-gradient-to-tr from-gray-200 via-gray-100 to-white animate-pulse" />
+      </div>
+      <div className="relative mx-auto max-w-5xl px-6 py-16 text-center">
+        <p className="mb-6 inline-block rounded-full border border-gray-200 px-4 py-1 text-xs tracking-widest text-gray-500 uppercase">
+          Design • Tecnologia • Marketing
+        </p>
+        <h1 className="kinetic-text mx-auto leading-[0.95]">
+          <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold">EXPERIÊNCIA DIGITAL</span>
+          <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold">COM EFICIÊNCIA</span>
+        </h1>
+        <p className="mt-6 text-base sm:text-lg text-gray-500">O que há de mais atual, aplicado para resolver.</p>
+      </div>
+      <style>{`
+        .kinetic-text {
+          background: linear-gradient(120deg, #d7d7d7, #a7a7a7, #7d7d7d, #d7d7d7);
+          background-size: 240% 240%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          animation: sheen 6s ease-in-out infinite, tilt 6s ease-in-out infinite;
+        }
+        @keyframes sheen { 0% { background-position: 0% 50% } 50% { background-position: 100% 50% } 100% { background-position: 0% 50% } }
+        @keyframes tilt { 0% { transform: perspective(1000px) rotateX(7deg) rotateY(-6deg) } 50% { transform: perspective(1000px) rotateX(-5deg) rotateY(5deg) } 100% { transform: perspective(1000px) rotateX(7deg) rotateY(-6deg) } }
+        /* efeito prata compartilhado */
+        .silver-kinetic { background: linear-gradient(120deg,#cfd3d7,#9aa0a6,#e5e7eb,#cfd3d7); background-size: 220% 220%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: sheen 6s linear infinite; }
+      `}</style>
+    </section>
+  );
+}
+
+// ===============================================
+// SERVIÇOS (anel 3D + lista dinâmica)
+// ===============================================
+export function Services3DPanel() {
+  const [selected, setSelected] = useState<any>(null);
+
+  const items = [
+    { key: 'design', title: 'DESIGN GRÁFICO', desc: 'Identidade visual e materiais que elevam sua marca.', img: 'https://i.imgur.com/K25QoJ6.png', services: ['IDENTIDADE VISUAL','MATERIAIS COMERCIAIS','ARTES PARA REDES','E-BOOKS','MOCKUPS','VISUAL 3D'] },
+    { key: 'dev', title: 'DESENVOLVIMENTO DE SISTEMAS', desc: 'Sites e sistemas sob medida, com foco em eficiência.', img: 'https://i.imgur.com/9PFreUn.png', services: ['LANDING PAGES','SITES','E-COMMERCE','DASHBOARDS','SaaS SOB DEMANDA'] },
+    { key: 'mkt', title: 'MARKETING', desc: 'Crescimento orientado a dados e presença relevante.', img: 'https://i.imgur.com/itAZ9xR.png', services: ['GESTÃO DE REDES','TRÁFEGO PAGO','GOOGLE MEU NEGÓCIO','FUNIS','CONSULTORIA'] },
+  ];
+
+  return (
+    <section id="servicos" className="relative w-full min-h-[90vh] overflow-hidden text-gray-700 flex flex-col lg:flex-row items-center justify-center gap-8 px-6 py-16 scroll-mt-24">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -inset-24 blur-3xl opacity-40 bg-gradient-to-tr from-gray-200 via-gray-100 to-white animate-pulse" />
+      </div>
+
+      <div className="absolute top-10 w-full text-center">
+        <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">SERVIÇOS</h2>
+      </div>
+
+      <div className="relative flex-1 grid place-items-center mt-16">
+        <div className="relative [perspective:1600px] h-[420px] w-[420px]">
+          <div className="ring3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d]">
+            {items.map((it, i) => {
+              const angle = (360 / items.length) * i;
+              const isActive = selected?.key === it.key;
+              return (
+                <div
+                  key={it.key}
+                  className={`card3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d] cursor-pointer transition-transform duration-700 ${isActive ? 'scale-110 brightness-110 animate-float' : 'hover:scale-105'}`}
+                  style={{ transform: `rotateY(${angle}deg) translateZ(260px)` }}
+                  onClick={() => setSelected(it)}
+                >
+                  <div className="relative h-[260px] w-[200px] rounded-3xl border border-white/40 backdrop-blur-2xl bg-gradient-radial from-white/70 via-white/30 to-transparent shadow-[0_10px_60px_rgba(0,0,0,0.08)] overflow-hidden">
+                    <img src={it.img} alt={it.title} className="h-28 w-28 object-contain [filter:grayscale(100%)] drop-shadow-[0_2px_6px_rgba(255,255,255,0.8)] mx-auto mt-16" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            key={selected.key}
+            initial={{ opacity: 0, x: 80 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 80 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="relative flex-1 max-w-2xl p-4 sm:p-6 lg:p-8"
+          >
+            <button onClick={() => setSelected(null)} className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 text-gray-400 hover:text-gray-600">✕</button>
+            <div className="mb-6">
+              <h3 className="silver-kinetic text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">{selected.title}</h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
+              {selected.services.map((svc: string) => (
+                <div key={svc} className="relative rounded-2xl border border-white/50 bg-white/60 backdrop-blur-xl px-5 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_18px_60px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-0.5">
+                  <span className="relative z-10 text-sm sm:text-base font-semibold uppercase text-gray-700 tracking-wide">{svc}</span>
+                </div>
+              ))}
+            </div>
+            {selected.desc && <p className="mt-4 text-sm text-gray-500">{selected.desc}</p>}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <style>{`
+        @keyframes spinY { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+        .ring3d { animation: spinY 35s linear infinite; }
+        .ring3d:hover { animation-play-state: paused; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+      `}</style>
+    </section>
+  );
+}
+
+// ===============================================
+// 5 ANOS DE ATUAÇÃO (5 flutuante + copy ao hover/click)
+// ===============================================
+export function ExperienceYearsSection() {
+  const [showCopy, setShowCopy] = useState(false);
+  return (
+    <section id="anos"
+      className="relative w-full min-h-[60vh] flex items-center justify-center overflow-hidden bg-white group scroll-mt-24"
+      onMouseEnter={() => setShowCopy(true)}
+      onMouseLeave={() => setShowCopy(false)}
+    >
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex items-center justify-center [perspective:1200px]">
+        <span
+          className={`text-[40vw] sm:text-[34vw] md:text-[28vw] lg:text-[24vw] leading-none font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-[#d9d9d9] via-white to-[#bdbdbd] animate-floatFive transition-transform duration-700 ease-out will-change-transform inline-block text-3d ${showCopy ? '-translate-x-[15%] rotate-y-6' : 'rotate-y-0'}`}
+          aria-hidden
+        >
+          5
+        </span>
+        <div className={`absolute right-[6%] max-w-xl text-right transition-all duration-700 ease-out ${showCopy ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-6'}`}>
+          <p className="text-gray-600 text-lg sm:text-xl md:text-2xl leading-relaxed">
+            Continuando desde 2020. <br />
+            Dezenas de empresas. Centenas de projetos. <br />
+            Opção e três países. E isso é só o começo.
+          </p>
+            <a
+        href={`https://wa.me/55429920015594?text=${encodeURIComponent("Oi! Vim pelo site e quero falar sobre seu trabalho")}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-5 py-2 font-semibold text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:bg-white"
+      >
+        vamos conversar
+      </a>
+
+          <a href="#cases" className="inline-flex items-center rounded-full border border-gray-200 px-5 py-2 font-semibold text-gray-600 hover:text-gray-800">
+            ver cases
+          </a>
+        </div>
+      </div>
+      <style>{`
+        @keyframes floatFive { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-14px) } }
+        .animate-floatFive { animation: floatFive 6s ease-in-out infinite; }
+        .text-3d { text-shadow: 0px 1px 0 #e9e9e9, 0px 2px 0 #e1e1e1, 0px 3px 0 #d9d9d9, 0px 4px 0 #d1d1d1, 0px 6px 12px rgba(0,0,0,0.08); transform-style: preserve-3d; }
+        .rotate-y-0 { transform: rotateY(0deg); }
+        .rotate-y-6 { transform: translateX(0) rotateY(12deg); }
+      `}</style>
+    </section>
+  );
+}
+
+// ===============================================
+// CASES (vídeos grayscale → cor no hover + CTA)
+// ===============================================
+export function CasesShowcase() {
+  const baseCards = [
+    { key: 'c1', type: 'video', href: 'https://www.mentoriafantin.com.br', label: 'Mentoria Fantin', poster: 'https://imgur.com/pMT8kBF.jpg', sources: [ { src: 'https://imgur.com/pMT8kBF.mp4', type: 'video/mp4' } ] },
+    { key: 'c2', type: 'video', href: 'https://www.assessoriadespachanteribas.com.br', label: 'Assessoria Despachante Ribas', poster: 'https://imgur.com/oSxzMJH.jpg', sources: [ { src: 'https://imgur.com/oSxzMJH.mp4', type: 'video/mp4' } ] },
+    { key: 'c3', type: 'video', href: 'https://www.protectribas.com.br', label: 'Protect Ribas', poster: 'https://imgur.com/FOCYvPv.jpg', sources: [ { src: 'https://imgur.com/FOCYvPv.mp4', type: 'video/mp4' } ] },
+    { key: 'c4', type: 'video', href: 'https://www.vitamaxbrasil.com.br', label: 'Vitamax', poster: 'https://imgur.com/tAnQu0j.jpg', sources: [ { src: 'https://imgur.com/tAnQu0j.mp4', type: 'video/mp4' } ] },
+  ];
+
+  const positions = [
+    { top: '12%', left: '8%' },
+    { top: '18%', left: '70%' },
+    { top: '58%', left: '12%' },
+    { top: '42%', left: '78%' },
+  ];
+
+  const hidden = { opacity: 0, y: 80 } as const;
+  const visible = (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut', delay: 0.12 * i } });
+
+  const handleEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    const v = (e.currentTarget.querySelector('video') as HTMLVideoElement | null);
+    if (v) { try { v.play(); } catch { /* noop */ } }
+  };
+  const handleLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    const v = (e.currentTarget.querySelector('video') as HTMLVideoElement | null);
+    if (v) { try { v.pause(); v.currentTime = 0; } catch { /* noop */ } }
+  };
+
+  return (
+    <section id="cases" className="relative w-full min-h-[90vh] overflow-hidden bg-white flex flex-col items-center justify-center px-6 py-24 scroll-mt-24">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -inset-24 blur-3xl opacity-30 bg-gradient-to-tr from-gray-200 via-gray-100 to-white" />
+      </div>
+      <h2 className="relative z-10 text-center silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-10">CASES</h2>
+      <div className="absolute inset-0">
+        {baseCards.map((c, idx) => (
+          <motion.div
+            key={c.key}
+            initial={hidden}
+            whileInView={visible(idx)}
+            viewport={{ once: true, margin: '-10% 0px -10% 0px' }}
+            className={`group case-float ${idx % 2 ? 'float-alt' : 'float-main'}`}
+            style={{ position: 'absolute', top: `min(${positions[idx % positions.length].top}, 82%)`, left: positions[idx % positions.length].left, animationDelay: `${idx * 0.6}s`, animationDuration: `${9 + idx}s` }}
+            onMouseEnter={handleEnter}
+            onMouseLeave={handleLeave}
+          >
+            <a
+              href={c.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Visitar ${c.label}`}
+              className="absolute inset-0 z-10"
+            />
+
+            <video className="case-media" muted playsInline loop preload="metadata" poster={c.poster}>
+              {c.sources.map((s) => (
+                <source key={s.src} src={s.src} type={s.type} />
+              ))}
+            </video>
+
+            <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/75 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+              <a
+                href={c.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-full border border-white/60 bg-white/80 backdrop-blur-md px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-700 shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:bg-white"
+              >
+                visite a case
+              </a>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+      <style>{`
+        .case-float { width: 240px; height: 140px; border-radius: 18px; display: block; overflow: hidden; backdrop-filter: blur(12px); background: rgba(255,255,255,0.60); border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 10px 40px rgba(0,0,0,0.06); transition: transform .35s ease, box-shadow .35s ease; animation: floatCard 12s ease-in-out infinite; will-change: transform; position: relative; }
+        .case-float:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 26px 80px rgba(0,0,0,0.10); animation-play-state: paused; }
+        .case-media { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: filter 0.5s ease, transform 0.5s ease, opacity 0.5s ease; opacity: 0.98; }
+        .case-float:hover .case-media { filter: grayscale(0%); transform: scale(1.04); opacity: 1; }
+        @keyframes floatCard { 0% { transform: translateY(0) rotateZ(0deg) } 50% { transform: translateY(-18px) rotateZ(0.4deg) } 100% { transform: translateY(0) rotateZ(0deg) } }
+        @keyframes floatCardAlt { 0% { transform: translateY(0) translateX(0) rotateZ(0deg) } 25% { transform: translateY(-10px) translateX(8px) rotateZ(-0.2deg) } 50% { transform: translateY(-14px) translateX(0) rotateZ(-0.4deg) } 75% { transform: translateY(-10px) translateX(-8px) rotateZ(-0.2deg) } 100% { transform: translateY(0) translateX(0) rotateZ(0deg) } }
+        .float-main { animation-name: floatCard; }
+        .float-alt { animation-name: floatCardAlt; }
+      `}</style>
+    </section>
+  );
+}
+
+// ===============================================
+// CTA (chamada para ação)
+// ===============================================
+export function CtaSection() {
+  return (
+    <section id="cta" className="relative w-full py-24 px-6 bg-white scroll-mt-24">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -inset-24 blur-3xl opacity-30 bg-gradient-to-tr from-gray-200 via-gray-100 to-white" />
+      </div>
+      <div className="relative max-w-5xl mx-auto text-center">
+        <h2 className="silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+          SE CONCENTRE NO QUE É BOM, DELEGUE TODO O RESTO.
+        </h2>
+        <div className="mt-8 flex items-center justify-center gap-3">
+          <a
+        href={`https://wa.me/55429920015594?text=${encodeURIComponent("Oi! Vim pelo site e quero falar sobre seu trabalho")}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-5 py-2 font-semibold text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:bg-white"
+      >
+        vamos conversar
+      </a>
+
+          <a href="#cases" className="inline-flex items-center rounded-full border border-gray-200 px-5 py-2 font-semibold text-gray-600 hover:text-gray-800">
+            ver cases
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ===============================================
+// DEPOIMENTOS FLUTUANTES/ARRASTÁVEIS (NOVA SEÇÃO)
+// ===============================================
+export function FeedbackFloatingSection() {
+  const feedbacks = [
+    { id: 'tiago',     type: 'text',  author: 'Tiago Fantin',   text: 'Muito competente, está em um nível alto e cobra um valor justo.', stars: 5 },
+    { id: 'fernando',  type: 'text',  author: 'Fernando Ubaldo', text: 'Trabalho muito ótimo, super recomendo.', stars: 5 },
+    { id: 'mariane',   type: 'text',  author: 'Mariane Ribeiro', text: 'Ajudou a engajar no Instagram, direção de conteúdo e organização. Sempre muito prestativa!', stars: 5 },
+    { id: 'daniele',   type: 'text',  author: 'Daniele Lúcio',   text: 'Serviço excelente e completo. Sempre ouvindo o cliente. Profissionalismo impecável!', stars: 5 },
+    { id: 'isabelly',  type: 'text',  author: 'Isabelly Soares', text: 'Você é INCRÍVEL, maravilhosa, atenciosa. O slogan ficou a minha cara. Obrigada!', stars: 5 },
+    { id: 'kariny',    type: 'stars', author: 'Kariny Dalzotto',               aspect: 'Profissionalismo', stars: 5 },
+    { id: 'giovanne',  type: 'stars', author: 'Giovanne Rocha',                aspect: 'Profissionalismo', stars: 5 },
+    { id: 'shary',     type: 'stars', author: 'Sharyane Morais Ribeiro',       aspect: 'Receptividade, Qualidade, Profissionalismo, Valor', stars: 5 },
+    { id: 'kayane',    type: 'stars', author: 'Kayane Talevi',                 aspect: 'Receptividade, Qualidade, Profissionalismo, Valor', stars: 5 },
+    { id: 'patricia',  type: 'stars', author: 'Patrícia Lima da Cruz',         aspect: 'Receptividade, Qualidade, Profissionalismo, Valor', stars: 5 },
+    { id: 'silmara',   type: 'stars', author: 'Silmara Guimarães',             aspect: 'Valor', stars: 4 },
+    { id: 'gustavo',   type: 'stars', author: 'Gustavo Henrique',              aspect: 'Avaliação 5★', stars: 5 },
+    { id: 'skyhawk',   type: 'stars', author: 'SkyHawk',                       aspect: 'Avaliação 5★', stars: 5 },
+    { id: 'guilherme', type: 'stars', author: 'Guilherme Gonçalves (Local Guide)', aspect: 'Avaliação 5★', stars: 5 },
+  ];
+
+  const spots = [
+    { top: '10%', left: '8%' },  { top: '14%', left: '36%' }, { top: '16%', left: '66%' },
+    { top: '28%', left: '20%' }, { top: '30%', left: '50%' }, { top: '32%', left: '78%' },
+    { top: '46%', left: '10%' }, { top: '48%', left: '38%' }, { top: '50%', left: '70%' },
+    { top: '64%', left: '22%' }, { top: '66%', left: '54%' }, { top: '68%', left: '80%' },
+    { top: '80%', left: '12%' }, { top: '82%', left: '42%' }, { top: '84%', left: '72%' },
+  ];
+
+  return (
+    <section id="feedbacks" className="relative w-full min-h-[110vh] bg-white flex flex-col items-center justify-center overflow-hidden px-6 py-24 scroll-mt-24">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -inset-24 blur-3xl opacity-30 bg-gradient-to-tr from-gray-200 via-gray-100 to-white animate-pulse" />
+      </div>
+
+      <h2 className="relative z-10 text-center silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-10">AVALIAÇÕES</h2>
+
+      <div className="absolute inset-0">
+        {feedbacks.map((f, i) => {
+          const spot = spots[i % spots.length];
+          const delay = (i % 6) * 0.18;
+          const duration = 6.5 + (i % 5);
+          return (
+            <motion.div
+              key={f.id}
+              drag
+              dragElastic={0.12}
+              dragMomentum={false}
+              dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut', delay } }}
+              viewport={{ once: true, margin: '-10% 0px -10% 0px' }}
+              className="absolute w-[260px] sm:w-[320px] cursor-grab active:cursor-grabbing rounded-3xl border border-white/40 backdrop-blur-2xl bg-white/70 shadow-[0_10px_60px_rgba(0,0,0,0.08)] p-4 transition-transform duration-300 ease-out hover:scale-[1.03]"
+              style={{ top: `min(${spot.top}, 88%)`, left: spot.left }}
+              animate={{ y: [0, -10, 0], transition: { duration, repeat: Infinity, ease: 'easeInOut' } }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-gray-700 text-sm sm:text-base truncate pr-2">{f.author}</h3>
+                <span className="text-yellow-400 whitespace-nowrap">{'★'.repeat(Math.max(0, Math.min(5, f.stars || 5)))}</span>
+              </div>
+              {f.type === 'text' ? (
+                <p className="text-gray-600 text-sm sm:text-[15px] leading-snug">{f.text}</p>
+              ) : (
+                <p className="text-gray-600 text-sm sm:text-[15px] leading-snug">{f.aspect}</p>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      <style>{`.cursor-grab:active { cursor: grabbing; }`}</style>
+    </section>
+  );
+}
+
+// ===============================================
+// SOBRE MIM (Canvas de partículas + copy pessoal)
+// ===============================================
+export function AboutMeSection() {
+  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
+  const animRef = React.useRef(0);
+  const imgRef = React.useRef<HTMLImageElement | null>(null);
+  const stateRef = React.useRef({
+    points: [] as {x:number,y:number,tx:number,ty:number,r:number,d:number}[],
+    bg: [] as {x:number,y:number,ax:number,ay:number,vx:number,vy:number,r:number}[],
+    W: 0, H: 0,
+    started: 0,
+    mouse: {x:0,y:0},
+  });
+
+  const [q, setQ] = React.useState(320);
+  const [dot, setDot] = React.useState(2);
+  const [thr, setThr] = React.useState(80);
+  const [showInfo, setShowInfo] = React.useState(false);
+
+  const IMG_URL = 'https://i.imgur.com/rzOHNIu.jpg';
+
+  // cria pontos do retrato
+  const buildPoints = React.useCallback(() => {
+    const s = stateRef.current; const canvas = canvasRef.current!;
+    if (!imgRef.current || !canvas) return;
+    const img = imgRef.current;
+    const samples = q;
+    const off = document.createElement('canvas');
+    const ratio = img.height / img.width; const w = samples; const h = Math.round(samples*ratio);
+    off.width = w; off.height = h; const octx = off.getContext('2d', { willReadFrequently: true })!;
+    octx.drawImage(img,0,0,w,h);
+    const data = octx.getImageData(0,0,w,h).data;
+    const pts: typeof s.points = [];
+    const limiar = 255 - thr;
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        const k=(y*w+x)*4; const R=data[k],G=data[k+1],B=data[k+2];
+        const lum = 0.2126*R + 0.7152*G + 0.0722*B;
+        if(lum < limiar){
+          const nx = (x/(w-1))*2-1; const ny = (y/(h-1))*2-1;
+          pts.push({
+            x:(Math.random()*2-1)*1.8,
+            y:(Math.random()*2-1)*1.8,
+            tx:nx, ty:ny,
+            r:(Math.random()*0.6+0.4)*dot,
+            d:Math.random()*0.7,
+          });
+        }
+      }
+    }
+    s.points = pts; s.started = performance.now()/1000;
+  }, [q, dot, thr]);
+
+  // cria pontos de fundo (flutuantes por toda seção)
+  const buildBackground = React.useCallback(() => { const s = stateRef.current; const BG = s.W < 640 ? 300 : (s.W < 1024 ? 600 : 900); s.bg = []; 
+    for (let i=0;i<BG;i++){
+      const r = Math.random()*1.6 + 0.6;
+      const x = (Math.random()*2-1) * (s.W/2);
+      const y = (Math.random()*2-1) * (s.H/2);
+      s.bg.push({ x, y, ax:x, ay:y, vx:0, vy:0, r });
+    }
+  }, []);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+    const s = stateRef.current;
+
+    function resize(){
+      s.W = canvas.width = canvas.clientWidth * devicePixelRatio;
+      s.H = canvas.height = canvas.clientHeight * devicePixelRatio;
+      buildBackground();
+    }
+    const ro = new ResizeObserver(resize); ro.observe(canvas); resize();
+
+    const img = new Image(); img.crossOrigin='anonymous';
+    img.onload = () => { imgRef.current = img; buildPoints(); };
+    img.src = IMG_URL;
+
+    function tick(){
+      cancelAnimationFrame(animRef.current);
+      animRef.current = requestAnimationFrame(tick);
+      const t = performance.now()/1000; ctx.clearRect(0,0,s.W,s.H);
+      if(!s.points.length) return;
+
+      // fundo
+      ctx.save(); ctx.translate(s.W/2, s.H/2); ctx.fillStyle = 'rgba(205,210,215,0.9)';
+      const mx = s.mouse.x*(s.W/2), my = s.mouse.y*(s.H/2);
+      for(const p of s.bg){
+        const dx = mx - p.x, dy = my - p.y; const d2 = dx*dx + dy*dy;
+        const f = 0.08 * Math.exp(-d2/(2*180*180));
+        p.vx += dx*f + (p.ax-p.x)*0.01; p.vy += dy*f + (p.ay-p.y)*0.01;
+        p.vx *= 0.94; p.vy *= 0.94; p.x += p.vx; p.y += p.vy;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r*devicePixelRatio, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+
+      // retrato
+      const scale = Math.min(s.W,s.H)*0.48;
+      ctx.save(); ctx.translate(s.W/2, s.H/2); ctx.fillStyle = '#c7ccd1';
+      const prog = Math.min(1, (t - s.started)/2.2); const ease = 1 - Math.pow(1-prog,3);
+      for(const p of s.points){
+        p.x += (p.tx - p.x) * (0.08 + (p.d*0.06)) * ease;
+        p.y += (p.ty - p.y) * (0.08 + (p.d*0.06)) * ease;
+        const px = (p.x + s.mouse.x*0.02) * scale;
+        const py = (p.y + s.mouse.y*0.018) * scale;
+        ctx.beginPath(); ctx.arc(px,py,p.r*devicePixelRatio,0,Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function onMove(e: PointerEvent){
+      const rect = canvas.getBoundingClientRect();
+      s.mouse.x = ((e.clientX-rect.left)/rect.width - .5)*2;
+      s.mouse.y = ((e.clientY-rect.top)/rect.height - .5)*2;
+    }
+    canvas.addEventListener('pointermove', onMove);
+    canvas.addEventListener('pointerdown', onMove);
+
+    tick();
+    return () => { cancelAnimationFrame(animRef.current); canvas.removeEventListener('pointermove', onMove); canvas.removeEventListener('pointerdown', onMove); ro.disconnect(); };
+  }, [buildPoints, buildBackground]);
+
+  React.useEffect(() => { buildPoints(); }, [buildPoints]);
+
+  const replay = () => {
+    const s = stateRef.current;
+    for(const p of s.points){ p.x=(Math.random()*2-1)*1.8; p.y=(Math.random()*2-1)*1.8; }
+    s.started = performance.now()/1000;
+  };
+
+  return (
+    <section id="sobre"
+      className="relative w-full min-h-[80vh] overflow-hidden bg-white flex items-center justify-center group scroll-mt-24"
+      onMouseEnter={() => setShowInfo(true)}
+      onMouseLeave={() => setShowInfo(false)}
+      onTouchStart={() => setShowInfo(v=>!v)}
+    >
+      {/* Canvas com a animação central */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full touch-none" />
+
+      {/* Fade suave no rodapé para evitar corte do desenho */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white to-transparent z-[5]" />
+      {/* Fades laterais para integrar com o fundo */}
+      <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-28 bg-gradient-to-r from-white to-transparent z-[5]" />
+      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-28 bg-gradient-to-l from-white to-transparent z-[5]" />
+
+      {/* Controles (mantidos) */}
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-2xl bg-white/90 text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] p-3 sm:p-4 backdrop-blur flex flex-col gap-3 items-start w-[220px]">
+        <div className="font-semibold text-[12px]">Foto → Partículas 2D</div>
+        <div className="mt-3 flex flex-col gap-3 text-[12px]">
+          <label className="opacity-80">Resolução</label>
+          <input className="accent-gray-700" type="range" min={80} max={520} value={q} onChange={e=>setQ(parseInt(e.target.value))} />
+          <label className="opacity-80">Espessura</label>
+          <input className="accent-gray-700" type="range" min={1} max={5} value={dot} onChange={e=>setDot(parseInt(e.target.value))} />
+          <label className="opacity-80">Contraste</label>
+          <input className="accent-gray-700" type="range" min={0} max={220} value={thr} onChange={e=>setThr(parseInt(e.target.value))} />
+          <button onClick={replay} className="ml-1 inline-flex items-center rounded-lg bg-gray-900 text-white px-3 py-1.5 font-semibold">Repetir animação</button>
+        </div>
+      </div>
+
+      {/* Botão mobile para abrir/fechar o texto */}
+      <div className="fixed right-4 bottom-4 z-20 sm:hidden">
+        <button onClick={() => setShowInfo(v => !v)} className="rounded-full bg-white/90 backdrop-blur px-4 py-2 text-sm font-semibold text-gray-800 shadow-[0_10px_25px_rgba(0,0,0,0.08)] border border-white/60">
+          {showInfo ? 'Fechar' : 'Mostrar texto'}
+        </button>
+      </div>
+
+      {/* Card de texto (lateral direita) */}
+      <div className={`absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-10 w-[min(90vw,520px)] rounded-3xl border border-white/60 bg-white/85 backdrop-blur-xl shadow-[0_30px_120px_rgba(0,0,0,0.10)] p-6 md:p-10 transition-all duration-500 ${showInfo ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-6 pointer-events-none'}`}>
+        <h2 className="silver-kinetic text-3xl md:text-4xl font-extrabold tracking-tight mb-4">SOBRE MIM</h2>
+        <p className="text-gray-700 leading-relaxed"><strong>Muito prazer, eu sou a Marcela Queji!</strong><br/>
+          Tenho 25 anos e desde 2020 aprendo e atuo nesse ramo. Comecei com marketing e design e, com o tempo, aprofundei processos e tecnologia. Depois de dezenas de certificados e atendimentos, aprendi que a melhor entrega é a que <em>funciona com eficiência</em> — simples, bonita e resolutiva.</p>
+        <p className="mt-3 text-gray-700 leading-relaxed">Hoje, consigo oferecer soluções completas para a sua empresa.<br/>
+          <strong>Você me diz o que precisa, o resto é comigo.</strong>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+// ===============================================
+// SMOKE TESTS (simples)
+// ===============================================
+function runSmokeTests() {
+  const comps = [SiteHeader, SiteFooter, HeroKinetic, Services3DPanel, ExperienceYearsSection, CasesShowcase, CtaSection, FeedbackFloatingSection, AboutMeSection];
+  if (!comps.every((c) => typeof c === 'function')) throw new Error('Algum componente não está definido');
+}
+if (typeof window !== 'undefined') { try { runSmokeTests(); } catch (e) { /* noop */ } }
+
+// ===============================================
+// PÁGINA
+// ===============================================
+export default function Page() {
+  return (
+    <main className="bg-white overflow-hidden pt-20">
+      <style>{`html{scroll-behavior:smooth}`}</style>
+      <SiteHeader />
+      <HeroKinetic />
+      <Services3DPanel />
+      <ExperienceYearsSection />
+      <CasesShowcase />
+      <CtaSection />
+      <FeedbackFloatingSection />
+      <AboutMeSection />
+      <SiteFooter />
+    </main>
+  );
+}
