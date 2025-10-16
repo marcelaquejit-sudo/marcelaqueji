@@ -13,7 +13,8 @@ export default function Services3DPanel() {
   return (
     <section id="servicos" className="relative w-full min-h-[110vh] overflow-hidden text-gray-700 flex flex-col lg:flex-row items-center justify-center gap-8 px-6 py-16 scroll-mt-24">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -f
+      <div className="absolute -full"></div>
+
 
       <div className="absolute top-10 w-full text-center">
         <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">SERVIÇOS</h2>
