@@ -31,7 +31,7 @@ export default function SiteFooter() {
           </div>
         </div>
         <div className="mt-10 text-xs text-gray-400">© {new Date().getFullYear()} Marcela Queji. Todos os direitos reservados.</div>
-        <p className="text-gray-500 mt-2 max-w-sm">Entregue ao SENHOR tudo o que você faz, e os seus planos serão estabelecidos.</p>
+        <p className="mt-10 text-xs text-gray-400">Entregue ao SENHOR tudo o que você faz, e os seus planos serão estabelecidos.</p>
       </div>
     </footer>
   );
