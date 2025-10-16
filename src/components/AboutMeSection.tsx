@@ -16,7 +16,6 @@ export default function AboutMeSection() {
   const [q, setQ] = React.useState(320);
   const [dot, setDot] = React.useState(2);
   const [thr, setThr] = React.useState(80);
-  const [showInfo, setShowInfo] = React.useState(false);
 
   const IMG_URL = "https://i.imgur.com/rzOHNIu.jpg";
 
@@ -30,8 +29,7 @@ export default function AboutMeSection() {
     const ratio = img.height / img.width;
     const w = samples;
     const h = Math.round(samples * ratio);
-    off.width = w;
-    off.height = h;
+    off.width = w; off.height = h;
     const octx = off.getContext("2d", { willReadFrequently: true })!;
     octx.drawImage(img, 0, 0, w, h);
     const data = octx.getImageData(0, 0, w, h).data;
@@ -40,9 +38,7 @@ export default function AboutMeSection() {
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
         const k = (y * w + x) * 4;
-        const R = data[k],
-          G = data[k + 1],
-          B = data[k + 2];
+        const R = data[k], G = data[k + 1], B = data[k + 2];
         const lum = 0.2126 * R + 0.7152 * G + 0.0722 * B;
         if (lum < limiar) {
           const nx = (x / (w - 1)) * 2 - 1;
@@ -103,23 +99,19 @@ export default function AboutMeSection() {
       ctx.clearRect(0, 0, s.W, s.H);
       if (!s.points.length) return;
 
-      // fundo (partículas suaves sobre o fundo único do site)
+      // fundo
       ctx.save();
       ctx.translate(s.W / 2, s.H / 2);
       ctx.fillStyle = "rgba(205,210,215,0.9)";
-      const mx = s.mouse.x * (s.W / 2),
-        my = s.mouse.y * (s.H / 2);
+      const mx = s.mouse.x * (s.W / 2), my = s.mouse.y * (s.H / 2);
       for (const p of s.bg) {
-        const dx = mx - p.x,
-          dy = my - p.y;
+        const dx = mx - p.x, dy = my - p.y;
         const d2 = dx * dx + dy * dy;
         const f = 0.08 * Math.exp(-d2 / (2 * 180 * 180));
         p.vx += dx * f + (p.ax - p.x) * 0.01;
         p.vy += dy * f + (p.ay - p.y) * 0.01;
-        p.vx *= 0.94;
-        p.vy *= 0.94;
-        p.x += p.vx;
-        p.y += p.vy;
+        p.vx *= 0.94; p.vy *= 0.94;
+        p.x += p.vx; p.y += p.vy;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r * devicePixelRatio, 0, Math.PI * 2);
         ctx.fill();
@@ -178,92 +170,103 @@ export default function AboutMeSection() {
   return (
     <section
       id="sobre"
-      className="relative w-full min-h-[80vh] overflow-hidden flex items-center justify-center group scroll-mt-24"
-      onMouseEnter={() => setShowInfo(true)}
-      onMouseLeave={() => setShowInfo(false)}
-      onTouchStart={() => setShowInfo((v) => !v)}
+      // desktop: altura generosa; mobile: altura menor com animação no topo
+      className="relative w-full overflow-hidden scroll-mt-24"
     >
-      {/* Canvas da animação */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full touch-none" />
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 pt-6 md:pt-10 pb-8 md:pb-12">
+        {/* ======= CANVAS WRAPPER =======
+            Mobile: quadro com aspect ratio no TOPO
+            Desktop: canvas cobre a seção (absolute) */}
+        <div className="relative md:static">
+          {/* Wrapper que muda com breakpoint */}
+          <div className="relative md:absolute md:inset-0">
+            {/* Quadro (só afeta mobile/tablet) */}
+            <div className="relative aspect-[16/10] sm:aspect-[16/9] md:aspect-auto md:h-[68vh] rounded-3xl overflow-hidden border border-gray-200 bg-white/60 backdrop-blur shadow-[0_10px_60px_rgba(0,0,0,0.06)]">
+              <canvas ref={canvasRef} className="absolute inset-0 w-full h-full touch-none" />
+              {/* === Barra compacta de controles (MOBILE) === */}
+              <div className="md:hidden absolute inset-x-0 bottom-0 border-t border-gray-200 bg-white/75 backdrop-blur px-3 py-2">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min={80}
+                    max={520}
+                    value={q}
+                    onChange={(e) => setQ(parseInt(e.target.value))}
+                    className="flex-1"
+                    aria-label="Resolução"
+                    title="Resolução"
+                  />
+                  <input
+                    type="range"
+                    min={1}
+                    max={5}
+                    value={dot}
+                    onChange={(e) => setDot(parseInt(e.target.value))}
+                    className="flex-1"
+                    aria-label="Espessura"
+                    title="Espessura"
+                  />
+                  <input
+                    type="range"
+                    min={0}
+                    max={220}
+                    value={thr}
+                    onChange={(e) => setThr(parseInt(e.target.value))}
+                    className="flex-1"
+                    aria-label="Contraste"
+                    title="Contraste"
+                  />
+                  <button
+                    onClick={replay}
+                    className="shrink-0 h-9 px-3 rounded-lg text-[13px] font-semibold bg-gray-900 text-white hover:opacity-90 transition"
+                    aria-label="Repetir animação"
+                  >
+                    Repetir
+                  </button>
+                </div>
+              </div>
+            </div>
 
-      {/* REMOVIDOS: véus/gradientes que alteravam o tom de fundo */}
-      {/* 
-      <div className="pointer-events-none absolute bottom-0 ..."/>
-      <div className="pointer-events-none absolute left-0 ..."/>
-      <div className="pointer-events-none absolute right-0 ..."/>
-      */}
+            {/* ======= CONTROLES DESKTOP (ESQUERDA) ======= */}
+            <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 z-10">
+              <div className="w-[240px] rounded-2xl bg-white/90 text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] p-4 backdrop-blur">
+                <div className="font-semibold text-[12px]">Foto → Partículas 2D</div>
+                <div className="mt-3 flex flex-col gap-3 text-[12px]">
+                  <label className="opacity-80">Resolução</label>
+                  <input className="accent-gray-700" type="range" min={80} max={520} value={q} onChange={(e) => setQ(parseInt(e.target.value))} />
+                  <label className="opacity-80">Espessura</label>
+                  <input className="accent-gray-700" type="range" min={1} max={5} value={dot} onChange={(e) => setDot(parseInt(e.target.value))} />
+                  <label className="opacity-80">Contraste</label>
+                  <input className="accent-gray-700" type="range" min={0} max={220} value={thr} onChange={(e) => setThr(parseInt(e.target.value))} />
+                  <button onClick={replay} className="w-full h-11 rounded-xl font-semibold bg-gray-900 text-white hover:opacity-90 transition">
+                    Repetir animação
+                  </button>
+                </div>
+              </div>
+            </div>
 
-      {/* Controles */}
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-2xl bg-white/90 text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] p-3 sm:p-4 backdrop-blur flex flex-col gap-3 items-start w-[220px]">
-        <div className="font-semibold text-[12px]">Foto → Partículas 2D</div>
-        <div className="mt-3 flex flex-col gap-3 text-[12px]">
-          <label className="opacity-80">Resolução</label>
-          <input
-            className="accent-gray-700"
-            type="range"
-            min={80}
-            max={520}
-            value={q}
-            onChange={(e) => setQ(parseInt(e.target.value))}
-          />
-          <label className="opacity-80">Espessura</label>
-          <input
-            className="accent-gray-700"
-            type="range"
-            min={1}
-            max={5}
-            value={dot}
-            onChange={(e) => setDot(parseInt(e.target.value))}
-          />
-          <label className="opacity-80">Contraste</label>
-          <input
-            className="accent-gray-700"
-            type="range"
-            min={0}
-            max={220}
-            value={thr}
-            onChange={(e) => setThr(parseInt(e.target.value))}
-          />
-          <button
-            onClick={replay}
-            className="ml-1 inline-flex items-center rounded-lg bg-gray-900 text-white px-3 py-1.5 font-semibold"
-          >
-            Repetir animação
-          </button>
+            {/* ======= CARD SOBRE MIM (DIREITA) — escondido no mobile ======= */}
+            <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 z-10">
+              <div className="w-[min(36vw,520px)] rounded-3xl border border-white/60 bg-white/85 backdrop-blur-xl shadow-[0_30px_120px_rgba(0,0,0,0.10)] p-10">
+                <h2 className="silver-kinetic text-4xl font-extrabold tracking-tight mb-4">
+                  SOBRE MIM
+                </h2>
+                <p className="text-gray-700 leading-relaxed">
+                  <strong>Muito prazer, eu sou a Marcela Queji!</strong><br />
+                  Tenho 25 anos e desde 2020 aprendo e atuo nesse ramo. Comecei com marketing e design e, com o tempo,
+                  aprofundei processos e tecnologia. Depois de dezenas de certificados e atendimentos, aprendi que a melhor entrega
+                  é a que <em>funciona com eficiência</em> — planejada, sofisticada e resolutiva.
+                </p>
+                <p className="mt-3 text-gray-700 leading-relaxed">
+                  Hoje, consigo oferecer soluções completas para a sua empresa.<br />
+                  <strong>Você me diz o que precisa, o resto é comigo.</strong>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Botão mobile para abrir/fechar o texto */}
-      <div className="fixed right-4 bottom-4 z-20 sm:hidden">
-        <button
-          onClick={() => setShowInfo((v) => !v)}
-          className="rounded-full bg-white/90 backdrop-blur px-4 py-2 text-sm font-semibold text-gray-800 shadow-[0_10px_25px_rgba(0,0,0,0.08)] border border-white/60"
-        >
-          {showInfo ? "Fechar" : "Mostrar texto"}
-        </button>
-      </div>
-
-      {/* Card de texto */}
-      <div
-        className={`absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-10 w-[min(90vw,520px)] rounded-3xl border border-white/60 bg-white/85 backdrop-blur-xl shadow-[0_30px_120px_rgba(0,0,0,0.10)] p-6 md:p-10 transition-all duration-500 ${
-          showInfo ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6 pointer-events-none"
-        }`}
-      >
-        <h2 className="silver-kinetic text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
-          SOBRE MIM
-        </h2>
-        <p className="text-gray-700 leading-relaxed">
-          <strong>Muito prazer, eu sou a Marcela Queji!</strong>
-          <br />
-          Tenho 25 anos e desde 2020 aprendo e atuo nesse ramo. Comecei com marketing e design e, com o tempo,
-          aprofundei processos e tecnologia. Depois de dezenas de certificados e atendimentos, aprendi que a melhor entrega
-          é a que <em>funciona com eficiência</em> — planejada, sofisticada e resolutiva.
-        </p>
-        <p className="mt-3 text-gray-700 leading-relaxed">
-          Hoje, consigo oferecer soluções completas para a sua empresa.
-          <br />
-          <strong>Você me diz o que precisa, o resto é comigo.</strong>
-        </p>
+        {/* Espaço depois do quadro no mobile (pequeno) */}
+        <div className="md:hidden h-3" />
       </div>
     </section>
   );
