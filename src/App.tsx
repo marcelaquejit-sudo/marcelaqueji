@@ -9,11 +9,13 @@ import ExperienceYearsSection from "./components/ExperienceYearsSection";
 import CasesShowcase from "./components/CasesShowcase";
 import CtaSection from "./components/CtaSection";
 import FeedbackFloatingSection from "./components/FeedbackFloatingSection";
+import FestiveController from "./components/FestiveController";
 
 export default function App() {
   return (
     <main className="bg-white overflow-hidden pt-20">
       <AnalyticsBoot />
+      <FestiveController />
       <SiteHeader />
       <AboutMeSection />
       <HeroKinetic />
