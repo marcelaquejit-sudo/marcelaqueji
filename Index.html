@@ -359,9 +359,15 @@ export function CtaSection() {
           SE CONCENTRE NO QUE É BOM, DELEGUE TODO O RESTO.
         </h2>
         <div className="mt-8 flex items-center justify-center gap-3">
-          <a href="#cta" className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-5 py-2 font-semibold text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:bg-white">
-            vamos conversar
-          </a>
+          <a
+        href={`https://wa.me/55429920015594?text=${encodeURIComponent("Oi! Vim pelo site e quero falar sobre seu trabalho")}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-5 py-2 font-semibold text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:bg-white"
+      >
+        vamos conversar
+      </a>
+
           <a href="#cases" className="inline-flex items-center rounded-full border border-gray-200 px-5 py-2 font-semibold text-gray-600 hover:text-gray-800">
             ver cases
           </a>
