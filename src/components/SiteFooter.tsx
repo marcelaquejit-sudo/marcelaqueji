@@ -67,12 +67,9 @@ export default function SiteFooter() {
           {/* Direitos / Info */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs text-gray-600">
             <p>
-              © {new Date().getFullYear()} Marcela Queji — Todos os direitos reservados.
+              © {new Date().getFullYear()} Entregue ao SENHOR tudo o que você faz, e os seus planos serão estabelecidos.
             </p>
             <div className="flex flex-wrap items-center gap-4">
-              <a href="#hero" className="hover:text-gray-900">Início</a>
-              <a href="#privacidade" className="hover:text-gray-900">Política de Privacidade</a>
-              <a href="#termos" className="hover:text-gray-900">Termos de Uso</a>
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 className="inline-flex items-center gap-1 hover:text-gray-900"
