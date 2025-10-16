@@ -63,7 +63,7 @@ export default function SiteFooter() {
           {/* Direitos / Info */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs text-gray-600">
             <p>
-              © {new Date().getFullYear()} Entregue ao SENHOR tudo o que você faz, e os seus planos serão estabelecidos.
+             Entregue ao SENHOR tudo o que você faz, e os seus planos serão estabelecidos.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <button
