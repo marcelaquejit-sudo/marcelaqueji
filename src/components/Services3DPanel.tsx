@@ -28,13 +28,14 @@ function useIsDesktop(minWidth = 1024) {
 }
 
 export default function Services3DPanel({
-  mobileNudgeY = 48,
-  desktopNudgeY = -30,
+  // ↓ “perto, seguro”
+  mobileNudgeY = 16,
+  desktopNudgeY = 12,
   mobileNudgeX = 0,
   desktopNudgeX = 0,
-  ringSizeMobile = 360,
-  ringSizeDesktop = 420,
-  translateZMobile = 220,
+  ringSizeMobile = 320,
+  ringSizeDesktop = 440,
+  translateZMobile = 200,
   translateZDesktop = 260,
 }: Services3DPanelProps) {
   const [selected, setSelected] = useState<any>(null);
