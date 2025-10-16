@@ -6,20 +6,27 @@ export default function HeroKinetic() {
       id="hero"
       className="relative min-h-[70vh] w-full text-gray-700 flex items-center overflow-hidden scroll-mt-24"
     >
-      <div className="relative mx-auto max-w-[1200px] px-6 py-16 text-center">
-        <p className="mb-6 inline-block rounded-full border border-gray-200 px-4 py-1 text-xs tracking-widest text-gray-500 uppercase">
+      {/* fundo liso mantido */}
+
+      <div className="relative mx-auto max-w-[1100px] px-6 py-16 text-center">
+        <p className="mb-6 inline-block rounded-full border border-gray-200 px-4 py-1 text-[11px] tracking-widest text-gray-500 uppercase">
           Design • Tecnologia • Marketing
         </p>
 
-        <h1 className="mx-auto leading-[0.9]">
-          {/* linha 1 – não quebra */}
-          <span className="block whitespace-nowrap font-extrabold
-                           text-[clamp(32px,8vw,120px)]">
+        <h1 className="mx-auto leading-[0.9] tracking-tight">
+          {/* Linha 1 — mantém efeito e não quebra */}
+          <span
+            className="kinetic-text block whitespace-nowrap font-extrabold
+                       text-[clamp(28px,6.5vw,92px)]"
+          >
             EXPERIÊNCIA DIGITAL
           </span>
-          {/* linha 2 – não quebra */}
-          <span className="block whitespace-nowrap font-extrabold
-                           text-[clamp(32px,8vw,120px)]">
+
+          {/* Linha 2 — mantém efeito e não quebra */}
+          <span
+            className="kinetic-text block whitespace-nowrap font-extrabold
+                       text-[clamp(28px,6.5vw,92px)]"
+          >
             COM EFICIÊNCIA
           </span>
         </h1>
@@ -31,4 +38,5 @@ export default function HeroKinetic() {
     </section>
   );
 }
+
 
