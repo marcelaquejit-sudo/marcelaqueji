@@ -8,14 +8,14 @@ export default function FeedbackFloatingSection() {
     { id: 'mariane',   type: 'text',  author: 'Mariane Ribeiro', text: 'Ajudou a engajar no Instagram, direção de conteúdo e organização. Sempre muito prestativa!', stars: 5 },
     { id: 'daniele',   type: 'text',  author: 'Daniele Lúcio',   text: 'Serviço excelente e completo. Sempre ouvindo o cliente. Profissionalismo impecável!', stars: 5 },
     { id: 'isabelly',  type: 'text',  author: 'Isabelly Soares', text: 'Você é INCRÍVEL, maravilhosa, atenciosa. O slogan ficou a minha cara. Obrigada!', stars: 5 },
-    { id: 'kariny',    type: 'stars', author: 'Kariny Dalzotto',               aspect: 'Profissionalismo', stars: 5 },
-    { id: 'giovanne',  type: 'stars', author: 'Giovanne Rocha',                aspect: 'Profissionalismo', stars: 5 },
-    { id: 'shary',     type: 'stars', author: 'Sharyane Morais Ribeiro',       aspect: 'Receptividade, Qualidade, Profissionalismo, Valor', stars: 5 },
-    { id: 'kayane',    type: 'stars', author: 'Kayane Talevi',                 aspect: 'Receptividade, Qualidade, Profissionalismo, Valor', stars: 5 },
-    { id: 'patricia',  type: 'stars', author: 'Patrícia Lima da Cruz',         aspect: 'Receptividade, Qualidade, Profissionalismo, Valor', stars: 5 },
-    { id: 'silmara',   type: 'stars', author: 'Silmara Guimarães',             aspect: 'Valor', stars: 4 },
-    { id: 'gustavo',   type: 'stars', author: 'Gustavo Henrique',              aspect: 'Avaliação 5★', stars: 5 },
-    { id: 'skyhawk',   type: 'stars', author: 'SkyHawk',                       aspect: 'Avaliação 5★', stars: 5 },
+    { id: 'kariny',    type: 'stars', author: 'Kariny Dalzotto', aspect: 'Profissionalismo', stars: 5 },
+    { id: 'giovanne',  type: 'stars', author: 'Giovanne Rocha',  aspect: 'Profissionalismo', stars: 5 },
+    { id: 'shary',     type: 'stars', author: 'Sharyane Morais Ribeiro', aspect: 'Receptividade, Qualidade, Profissionalismo, Valor', stars: 5 },
+    { id: 'kayane',    type: 'stars', author: 'Kayane Talevi', aspect: 'Receptividade, Qualidade, Profissionalismo, Valor', stars: 5 },
+    { id: 'patricia',  type: 'stars', author: 'Patrícia Lima da Cruz', aspect: 'Receptividade, Qualidade, Profissionalismo, Valor', stars: 5 },
+    { id: 'silmara',   type: 'stars', author: 'Silmara Guimarães', aspect: 'Valor', stars: 4 },
+    { id: 'gustavo',   type: 'stars', author: 'Gustavo Henrique', aspect: 'Avaliação 5★', stars: 5 },
+    { id: 'skyhawk',   type: 'stars', author: 'SkyHawk', aspect: 'Avaliação 5★', stars: 5 },
     { id: 'guilherme', type: 'stars', author: 'Guilherme Gonçalves (Local Guide)', aspect: 'Avaliação 5★', stars: 5 },
   ];
 
@@ -28,12 +28,17 @@ export default function FeedbackFloatingSection() {
   ];
 
   return (
-    <section id="feedbacks" className="relative w-full min-h-[110vh] bg-white flex flex-col items-center justify-center overflow-hidden px-6 py-24 scroll-mt-24">
+    <section
+      id="feedbacks"
+      className="relative w-full min-h-[120vh] flex flex-col items-center justify-center overflow-hidden px-6 py-24 scroll-mt-24"
+    >
+      {/* fundo suave com leve gradiente, sem cor sólida */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -inset-24 blur-3xl opacity-30 bg-gradient-to-tr from-gray-200 via-gray-100 to-white animate-pulse" />
       </div>
 
-      <div className="absolute inset-0">
+      {/* ====== DESKTOP ====== */}
+      <div className="hidden md:block absolute inset-0">
         {feedbacks.map((f, i) => {
           const spot = spots[i % spots.length];
           const delay = (i % 6) * 0.18;
@@ -46,24 +51,62 @@ export default function FeedbackFloatingSection() {
               dragMomentum={false}
               dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut', delay } }}
-              viewport={{ once: true, margin: '-10% 0px -10% 0px' }}
-              className="absolute w-[260px] sm:w-[320px] cursor-grab active:cursor-grabbing rounded-3xl border border-white/40 backdrop-blur-2xl bg-white/70 shadow-[0_10px_60px_rgba(0,0,0,0.08)] p-4 transition-transform duration-300 ease-out hover:scale-[1.03]"
+              whileInView={{
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.6, ease: "easeOut", delay },
+              }}
+              viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
+              className="absolute w-[260px] sm:w-[320px] cursor-grab active:cursor-grabbing rounded-3xl border border-[#c9c9c9]/60 backdrop-blur-2xl bg-white/70 p-4 transition-transform duration-300 ease-out hover:scale-[1.03]"
               style={{ top: `min(${spot.top}, 88%)`, left: spot.left }}
-              animate={{ y: [0, -10, 0], transition: { duration, repeat: Infinity, ease: 'easeInOut' } }}
+              animate={{
+                y: [0, -10, 0],
+                transition: { duration, repeat: Infinity, ease: "easeInOut" },
+              }}
             >
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-gray-700 text-sm sm:text-base truncate pr-2">{f.author}</h3>
-                <span className="text-yellow-400 whitespace-nowrap">{'★'.repeat(Math.max(0, Math.min(5, f.stars || 5)))}</span>
+                <h3 className="font-semibold text-gray-700 text-sm sm:text-base truncate pr-2">
+                  {f.author}
+                </h3>
+                <span className="text-yellow-400 whitespace-nowrap">
+                  {"★".repeat(Math.max(0, Math.min(5, f.stars || 5)))}
+                </span>
               </div>
-              {f.type === 'text' ? (
-                <p className="text-gray-600 text-sm sm:text-[15px] leading-snug">{f.text}</p>
-              ) : (
-                <p className="text-gray-600 text-sm sm:text-[15px] leading-snug">{f.aspect}</p>
-              )}
+              <p className="text-gray-600 text-sm sm:text-[15px] leading-snug">
+                {f.type === "text" ? f.text : f.aspect}
+              </p>
             </motion.div>
           );
         })}
+      </div>
+
+      {/* ====== MOBILE ====== */}
+      <div className="md:hidden flex flex-col gap-6 w-full max-w-sm">
+        {feedbacks.map((f, i) => (
+          <motion.div
+            key={f.id}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.5, ease: "easeOut", delay: i * 0.1 },
+            }}
+            viewport={{ once: false, amount: 0.4 }}
+            className="rounded-3xl border border-[#c9c9c9]/60 backdrop-blur-2xl bg-white/70 p-4"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-gray-700 text-sm truncate pr-2">
+                {f.author}
+              </h3>
+              <span className="text-yellow-400 whitespace-nowrap">
+                {"★".repeat(Math.max(0, Math.min(5, f.stars || 5)))}
+              </span>
+            </div>
+            <p className="text-gray-600 text-sm leading-snug">
+              {f.type === "text" ? f.text : f.aspect}
+            </p>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
