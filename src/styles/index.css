@@ -4,4 +4,8 @@
 
 /* Ajustes globais simples */
 html { scroll-behavior: smooth; }
-body { @apply bg-white text-gray-700; }
+body { 
+  @apply text-gray-700;
+  background-color: transparent !important;
+}
+
