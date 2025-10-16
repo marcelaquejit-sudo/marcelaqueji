@@ -23,9 +23,9 @@ export default function SiteFooter() {
             <div>
               <div className="font-semibold text-gray-700 mb-2">Contatos</div>
               <ul className="space-y-1 text-gray-600">
-                <li><a href="#" className="hover:text-gray-900">Whatsapp</a></li>
-                <li><a href="#" className="hover:text-gray-900">Instagram</a></li>
-                <li><a href="#" className="hover:text-gray-900">Linkdin</a></li>
+                <li><a href="https://wa.me/5542920015594" className="hover:text-gray-900">Whatsapp</a></li>
+                <li><a href="https://www.instagram.com/marcelaqueji?igsh=bzF4Z2prYzA3dm9y" className="hover:text-gray-900">Instagram</a></li>
+                <li><a href="https://www.linkedin.com/in/marcelaqueji?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" className="hover:text-gray-900">Linkdin</a></li>
               </ul>
             </div>
           </div>
