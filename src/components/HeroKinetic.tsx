@@ -14,7 +14,10 @@ export default function HeroKinetic() {
           <span className="kinetic-text block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold">EXPERIÊNCIA DIGITAL</span>
           <span className="kinetic-text block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold">COM EFICIÊNCIA</span>
         </h1>
-        <p className="mt-6 text-base sm:text-lg text-gray-500">O que há de mais atual — aplicado para solucionar.</p>
+        <p className="mt-6 text-base sm:text-lg text-gray-500">
+        O que há de mais atual - aplicado para solucionar.
+      </p>
+
       </div>
     </section>
   );
