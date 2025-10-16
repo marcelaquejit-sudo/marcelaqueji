@@ -77,7 +77,7 @@ export default function CasesShowcase() {
       {/* Fundo liso: nenhum gradiente extra */}
 
       <h2 className="relative z-10 text-center silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-10">
-        RESULTADOS
+        ÚLTIMOS RESULTADOS
       </h2>
 
       <div className="absolute inset-0">
