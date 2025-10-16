@@ -7,7 +7,17 @@ export default function SiteHeader() {
       <div className="mx-auto max-w-6xl px-4">
         <div className="mt-3 rounded-2xl bg-white/80 backdrop-blur border border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.08)] px-4 py-2">
           <div className="flex items-center justify-between">
-            <a href="#hero" className="silver-kinetic text-lg font-extrabold tracking-tight">MARCELA QUEJI</a>
+            {/* Logo como imagem */}
+            <a href="#hero" className="block" aria-label="Ir para o início">
+              <img
+                src="https://i.imgur.com/2SShxU3.png"
+                alt="Marcela Queji"
+                className="h-8 w-auto md:h-9 select-none"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+              />
+            </a>
 
             {/* Desktop menu (mantém "Sobre") */}
             <nav className="hidden md:flex items-center gap-6 text-sm text-gray-700">
@@ -35,7 +45,6 @@ export default function SiteHeader() {
               <a onClick={() => setOpen(false)} href="#servicos" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Serviços</a>
               <a onClick={() => setOpen(false)} href="#cases" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Cases</a>
               <a onClick={() => setOpen(false)} href="#feedbacks" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Feedbacks</a>
-              {/* Removido: link "Sobre" no mobile */}
               <a onClick={() => setOpen(false)} href="#cta" className="block rounded-lg px-3 py-2 bg-white/80 backdrop-blur border border-white/60 font-semibold text-gray-800">Contato</a>
             </div>
           )}
