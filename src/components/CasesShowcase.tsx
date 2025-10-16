@@ -35,22 +35,6 @@ export default function CasesShowcase() {
       poster: "https://imgur.com/tAnQu0j.jpg",
       sources: [{ src: "https://imgur.com/tAnQu0j.mp4", type: "video/mp4" }],
     },
-    {
-      key: "c5",
-      type: "video",
-      href: "https://youtu.be/9Qkr9e4UAtY",
-      label: "Identidade Visual",
-      poster: "https://imgur.com/eV3a5ns",
-      sources: [{ src: "https://youtu.be/9Qkr9e4UAtY", type: "video/mp4" }],
-    },
-    {
-      key: "c6",
-      type: "video",
-      href: "https://youtu.be/7Ooc-Y4pKpo",
-      label: "Identidade Visual",
-      poster: "https://imgur.com/eV3a5ns",
-      sources: [{ src: "https://youtu.be/7Ooc-Y4pKpo", type: "video/mp4" }],
-    },
   ];
 
   const positions = [
@@ -58,8 +42,6 @@ export default function CasesShowcase() {
     { top: "18%", left: "70%" },
     { top: "58%", left: "12%" },
     { top: "30%", left: "20%" },
-    { top: "58%", left: "70%" },
-    { top: "12%", left: "70%" },
   ];
 
   const hidden = { opacity: 0, y: 80 } as const;
