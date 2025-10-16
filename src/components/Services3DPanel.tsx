@@ -29,7 +29,7 @@ function useIsDesktop(minWidth = 1024) {
 
 export default function Services3DPanel({
   mobileNudgeY = 48,
-  desktopNudgeY = 0,
+  desktopNudgeY = -30,
   mobileNudgeX = 0,
   desktopNudgeX = 0,
   ringSizeMobile = 360,
