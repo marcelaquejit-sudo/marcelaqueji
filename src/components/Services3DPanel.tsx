@@ -50,18 +50,18 @@ export default function Services3DPanel() {
   return (
     <section
       id="servicos"
-      className="relative w-full min-h-[90vh] text-gray-700 flex flex-col lg:flex-row items-center justify-center gap-8 px-6 py-16 scroll-mt-24"
+      className="relative w-full min-h-[90vh] text-gray-700 flex flex-col lg:flex-row items-center justify-center gap-8 px-6 pt-10 pb-16 scroll-mt-24"
     >
-      {/* Fundo liso: removido o gradient/blur que criava faixas */}
-
-      <div className="absolute top-10 w-full text-center">
+      {/* Título mais próximo dos cards */}
+      <div className="absolute top-4 sm:top-6 md:top-8 w-full text-center">
         <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
           SERVIÇOS
         </h2>
         <p className="mt-2 text-gray-500">Clique em um card para ver os detalhes</p>
       </div>
 
-      <div className="relative flex-1 grid place-items-center mt-16">
+      {/* Anel 3D de cards com menos margem superior */}
+      <div className="relative flex-1 grid place-items-center mt-8 sm:mt-10">
         <div className="relative [perspective:1600px] h-[420px] w-[420px]">
           <div className="ring3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             {items.map((it, i) => {
@@ -103,6 +103,7 @@ export default function Services3DPanel() {
             <button
               onClick={() => setSelected(null)}
               className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 text-gray-400 hover:text-gray-600"
+              aria-label="Fechar detalhes"
             >
               ✕
             </button>
