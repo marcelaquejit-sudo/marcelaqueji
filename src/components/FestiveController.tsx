@@ -6,13 +6,12 @@ export default function FestiveController() {
   const [mode, setMode] = useState<"normal" | "natal" | "reveillon">("normal");
   const [transitioning, setTransitioning] = useState(false);
 
-  // 🔔 Sons de cada tema
+  // Sons de cada tema
   const sounds = {
     natal: new Audio("https://cdn.pixabay.com/download/audio/2023/01/26/audio_9a6f8c63e5.mp3?filename=christmas-bells-14639.mp3"),
     reveillon: new Audio("https://cdn.pixabay.com/download/audio/2022/03/09/audio_87d2c7dc54.mp3?filename=fireworks-112995.mp3"),
   };
 
-  // Aplica o som e animação suave
   const handleToggle = (target: "natal" | "reveillon") => {
     if (mode === target) {
       setMode("normal");
@@ -89,49 +88,80 @@ function NatalOverlay() {
       transition={{ duration: 0.8 }}
     >
       <SnowFall />
+      <IceOverlay />
       <GuirlandaTop />
     </motion.div>
   );
 }
 
+/* ❄️ Flocos prateados caindo por toda a tela */
 function SnowFall() {
-  const flakes = Array.from({ length: 40 });
+  const flakes = Array.from({ length: 80 });
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="fixed inset-0 overflow-hidden">
       {flakes.map((_, i) => (
         <motion.div
           key={i}
-          className="absolute text-white text-lg"
+          className="absolute text-[18px] select-none"
           initial={{
             x: Math.random() * window.innerWidth,
-            y: -10,
+            y: Math.random() * window.innerHeight * -1,
             opacity: 0.8,
+            scale: 0.6 + Math.random() * 0.6,
           }}
           animate={{
-            y: ["0%", "120%"],
+            y: ["-10%", "110%"],
             x: [
               Math.random() * window.innerWidth,
               Math.random() * window.innerWidth,
             ],
-            opacity: [1, 0.5, 1],
+            opacity: [0.9, 0.5, 0.9],
           }}
           transition={{
-            duration: 6 + Math.random() * 6,
+            duration: 10 + Math.random() * 10,
             repeat: Infinity,
             ease: "linear",
           }}
         >
-          ❄️
+          <span
+            style={{
+              background:
+                "linear-gradient(180deg,#f9f9f9,#c0c0c0,#a0a0a0)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              filter: "drop-shadow(0 0 6px rgba(255,255,255,0.4))",
+            }}
+          >
+            ❄
+          </span>
         </motion.div>
       ))}
     </div>
   );
 }
 
+/* 🧊 Camada de gelo translúcida */
+function IceOverlay() {
+  return (
+    <motion.div
+      className="absolute inset-0 pointer-events-none"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: [0.25, 0.35, 0.25] }}
+      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      style={{
+        background:
+          "url('https://i.imgur.com/kOIx4g2.png') repeat top left / cover",
+        filter: "blur(4px) brightness(1.15)",
+        mixBlendMode: "lighten",
+      }}
+    />
+  );
+}
+
+/* 🌟 Luzes da guirlanda */
 function GuirlandaTop() {
   const lights = Array.from({ length: 12 });
-
   return (
     <div className="absolute top-0 left-0 right-0 flex justify-center gap-4 mt-2">
       {lights.map((_, i) => (
@@ -236,3 +266,4 @@ function Confetti() {
     </div>
   );
 }
+
