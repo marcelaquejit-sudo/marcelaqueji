@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -115,7 +116,7 @@ export function HeroKinetic() {
           <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold">EXPERIÊNCIA DIGITAL</span>
           <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold">COM EFICIÊNCIA</span>
         </h1>
-        <p className="mt-6 text-base sm:text-lg text-gray-500">O que há de mais atual, aplicado para resolver.</p>
+        <p className="mt-6 text-base sm:text-lg text-gray-500">O que há de mais atual — aplicado para funcionar melhor.</p>
       </div>
       <style>{`
         .kinetic-text {
@@ -155,6 +156,7 @@ export function Services3DPanel() {
 
       <div className="absolute top-10 w-full text-center">
         <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">SERVIÇOS</h2>
+        <p className="mt-2 text-gray-500">Clique em um card para ver os detalhes</p>
       </div>
 
       <div className="relative flex-1 grid place-items-center mt-16">
@@ -239,20 +241,8 @@ export function ExperienceYearsSection() {
           <p className="text-gray-600 text-lg sm:text-xl md:text-2xl leading-relaxed">
             Continuando desde 2020. <br />
             Dezenas de empresas. Centenas de projetos. <br />
-            Opção e três países. E isso é só o começo.
+            E isso é só o começo.
           </p>
-            <a
-        href={`https://wa.me/55429920015594?text=${encodeURIComponent("Oi! Vim pelo site e quero falar sobre seu trabalho")}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-5 py-2 font-semibold text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:bg-white"
-      >
-        vamos conversar
-      </a>
-
-          <a href="#cases" className="inline-flex items-center rounded-full border border-gray-200 px-5 py-2 font-semibold text-gray-600 hover:text-gray-800">
-            ver cases
-          </a>
         </div>
       </div>
       <style>{`
@@ -301,7 +291,7 @@ export function CasesShowcase() {
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -inset-24 blur-3xl opacity-30 bg-gradient-to-tr from-gray-200 via-gray-100 to-white" />
       </div>
-      <h2 className="relative z-10 text-center silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-10">CASES</h2>
+      <h2 className="relative z-10 text-center silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-10">Resultados falam mais que promessas</h2>
       <div className="absolute inset-0">
         {baseCards.map((c, idx) => (
           <motion.div
@@ -337,7 +327,7 @@ export function CasesShowcase() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 rounded-full border border-white/60 bg-white/80 backdrop-blur-md px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-700 shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:bg-white"
               >
-                visite a case
+                Visite a case
               </a>
             </div>
           </motion.div>
@@ -368,20 +358,17 @@ export function CtaSection() {
       </div>
       <div className="relative max-w-5xl mx-auto text-center">
         <h2 className="silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
-          SE CONCENTRE NO QUE É BOM, DELEGUE TODO O RESTO.
+          Se concentre no que é bom, delegue todo o resto.
         </h2>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Transforme ideias em resultados com eficiência.
+        </p>
         <div className="mt-8 flex items-center justify-center gap-3">
-          <a
-        href={`https://wa.me/55429920015594?text=${encodeURIComponent("Oi! Vim pelo site e quero falar sobre seu trabalho")}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-5 py-2 font-semibold text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:bg-white"
-      >
-        vamos conversar
-      </a>
-
+          <a href="#cta" className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-5 py-2 font-semibold text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:bg-white">
+            Vamos conversar
+          </a>
           <a href="#cases" className="inline-flex items-center rounded-full border border-gray-200 px-5 py-2 font-semibold text-gray-600 hover:text-gray-800">
-            ver cases
+            Ver cases
           </a>
         </div>
       </div>
@@ -424,7 +411,7 @@ export function FeedbackFloatingSection() {
         <div className="absolute -inset-24 blur-3xl opacity-30 bg-gradient-to-tr from-gray-200 via-gray-100 to-white animate-pulse" />
       </div>
 
-      <h2 className="relative z-10 text-center silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-10">AVALIAÇÕES</h2>
+      <h2 className="relative z-10 text-center silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-10">Feedbacks e Resultados</h2>
 
       <div className="absolute inset-0">
         {feedbacks.map((f, i) => {
@@ -662,6 +649,7 @@ export default function Page() {
   return (
     <main className="bg-white overflow-hidden pt-20">
       <style>{`html{scroll-behavior:smooth}`}</style>
+      <AnalyticsBoot />
       <SiteHeader />
       <HeroKinetic />
       <Services3DPanel />
