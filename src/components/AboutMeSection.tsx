@@ -16,6 +16,7 @@ export default function AboutMeSection() {
   const [q, setQ] = React.useState(320);
   const [dot, setDot] = React.useState(2);
   const [thr, setThr] = React.useState(80);
+  const [showInfo, setShowInfo] = React.useState(false); // ⬅️ controla hover do card (desktop)
 
   const IMG_URL = "https://i.imgur.com/rzOHNIu.jpg";
 
@@ -100,7 +101,7 @@ export default function AboutMeSection() {
       ctx.clearRect(0, 0, s.W, s.H);
       if (!s.points.length) return;
 
-      // partículas de fundo
+      // fundo
       ctx.save();
       ctx.translate(s.W / 2, s.H / 2);
       ctx.fillStyle = "rgba(205,210,215,0.9)";
@@ -119,7 +120,7 @@ export default function AboutMeSection() {
       }
       ctx.restore();
 
-      // retrato
+      // retrato (partículas)
       const scale = Math.min(s.W, s.H) * 0.48;
       ctx.save();
       ctx.translate(s.W / 2, s.H / 2);
@@ -173,9 +174,19 @@ export default function AboutMeSection() {
     <section
       id="sobre"
       className="relative w-full min-h-[80vh] overflow-hidden flex items-center justify-center scroll-mt-24"
+      // ⬇️ mostra/oculta o card no desktop
+      onMouseEnter={() => setShowInfo(true)}
+      onMouseLeave={() => setShowInfo(false)}
     >
       {/* Canvas ocupa a seção inteira */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full touch-none" />
+
+      {/* ⬇️ FADE no final da imagem/área animada */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-28
+                   bg-gradient-to-b from-transparent to-white"
+        aria-hidden="true"
+      />
 
       {/* === CONTROLES (ESCONDIDOS NO MOBILE) === */}
       <div className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-2xl bg-white/90 text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] p-4 backdrop-blur flex-col gap-3 w-[220px]">
@@ -191,8 +202,15 @@ export default function AboutMeSection() {
         </button>
       </div>
 
-      {/* === CARD “SOBRE MIM” (ESCONDIDO NO MOBILE) === */}
-      <div className="hidden md:block absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-10 w-[min(36vw,520px)] rounded-3xl border border-white/60 bg-white/85 backdrop-blur-xl shadow-[0_30px_120px_rgba(0,0,0,0.10)] p-10">
+      {/* === CARD “SOBRE MIM” — desktop apenas; aparece no hover da seção === */}
+      <div
+        className={[
+          "hidden md:block absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-10",
+          "w-[min(36vw,520px)] rounded-3xl border border-white/60 bg-white/85 backdrop-blur-xl",
+          "shadow-[0_30px_120px_rgba(0,0,0,0.10)] p-10 transition-all duration-300",
+          showInfo ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none",
+        ].join(" ")}
+      >
         <h2 className="silver-kinetic text-4xl font-extrabold tracking-tight mb-4">SOBRE MIM</h2>
         <p className="text-gray-700 leading-relaxed">
           <strong>Muito prazer, eu sou a Marcela Queji!</strong><br />
@@ -208,4 +226,3 @@ export default function AboutMeSection() {
     </section>
   );
 }
-
