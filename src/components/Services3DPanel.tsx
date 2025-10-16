@@ -11,17 +11,16 @@ export default function Services3DPanel() {
   ];
 
   return (
-    <section id="servicos" className="relative w-full min-h-[90vh] overflow-hidden text-gray-700 flex flex-col lg:flex-row items-center justify-center gap-8 px-6 py-16 scroll-mt-24">
+    <section id="servicos" className="relative w-full min-h-[110vh] overflow-hidden text-gray-700 flex flex-col lg:flex-row items-center justify-center gap-8 px-6 py-16 scroll-mt-24">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -inset-24 blur-3xl opacity-40 bg-gradient-to-tr from-gray-200 via-gray-100 to-white animate-pulse" />
-      </div>
+        <div className="absolute -f
 
       <div className="absolute top-10 w-full text-center">
         <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">SERVIÇOS</h2>
         <p className="mt-2 text-gray-500">Clique em um card para ver os detalhes</p>
       </div>
 
-      <div className="relative flex-1 grid place-items-center mt-16">
+      <div className="relative flex-1 grid place-items-center mt-10">
         <div className="relative [perspective:1600px] h-[420px] w-[420px]">
           <div className="ring3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             {items.map((it, i) => {
