@@ -33,8 +33,6 @@ export default function FeedbackFloatingSection() {
         <div className="absolute -inset-24 blur-3xl opacity-30 bg-gradient-to-tr from-gray-200 via-gray-100 to-white animate-pulse" />
       </div>
 
-      <h2 className="relative z-10 text-center silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-10">Feedbacks e Resultados</h2>
-
       <div className="absolute inset-0">
         {feedbacks.map((f, i) => {
           const spot = spots[i % spots.length];
