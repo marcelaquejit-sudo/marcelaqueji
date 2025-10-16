@@ -7,7 +7,7 @@ export default function SiteFooter() {
         <div className="flex flex-col md:flex-row items-start justify-between gap-10">
           <div>
             <div className="silver-kinetic text-xl font-extrabold">MARCELA QUEJI</div>
-            <p className="text-gray-500 mt-2 max-w-sm">Experiência digital com eficiência - o que há de mais atual aplicado para solucionar.</p>
+            <p className="text-gray-500 mt-2 max-w-sm">Experiência digital com eficiência — o que há de mais atual aplicado para funcionar melhor.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 text-sm">
             <div>
