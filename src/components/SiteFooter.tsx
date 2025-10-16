@@ -42,7 +42,7 @@ export default function SiteFooter() {
           <div className="my-6 h-px w-full bg-gradient-to-r from-transparent via-gray-300/60 to-transparent" />
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs text-gray-600">
-            <p>© {new Date().getFullYear()} Entregue ao SENHOR tudo o que você faz, e os seus planos serão estabelecidos.</p>
+            <p> Entregue ao SENHOR tudo o que você faz, e os seus planos serão estabelecidos.</p>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="inline-flex items-center gap-1 hover:text-gray-900"
