@@ -1,43 +1,96 @@
 "use client";
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function FestiveController() {
   const [mode, setMode] = useState<"normal" | "natal" | "reveillon">("normal");
+  const [transitioning, setTransitioning] = useState(false);
+
+  // 🔔 Sons de cada tema
+  const sounds = {
+    natal: new Audio("https://cdn.pixabay.com/download/audio/2023/01/26/audio_9a6f8c63e5.mp3?filename=christmas-bells-14639.mp3"),
+    reveillon: new Audio("https://cdn.pixabay.com/download/audio/2022/03/09/audio_87d2c7dc54.mp3?filename=fireworks-112995.mp3"),
+  };
+
+  // Aplica o som e animação suave
+  const handleToggle = (target: "natal" | "reveillon") => {
+    if (mode === target) {
+      setMode("normal");
+      return;
+    }
+    setTransitioning(true);
+    setTimeout(() => {
+      setMode(target);
+      setTransitioning(false);
+    }, 400);
+    sounds[target].volume = 0.5;
+    sounds[target].play();
+  };
 
   return (
     <>
       {/* Botões fixos */}
       <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-[1000]">
         <button
-          onClick={() => setMode(mode === "natal" ? "normal" : "natal")}
-          className="text-2xl bg-white/70 backdrop-blur border border-white/60 shadow-md rounded-full px-3 py-2 hover:scale-110 transition"
+          onClick={() => handleToggle("natal")}
+          className={`text-2xl ${
+            mode === "natal"
+              ? "bg-green-100/80 border-green-400"
+              : "bg-white/70 border-white/60"
+          } backdrop-blur shadow-md rounded-full px-3 py-2 hover:scale-110 transition`}
           title="Ativar modo Natal 🎄"
         >
           🎄
         </button>
         <button
-          onClick={() => setMode(mode === "reveillon" ? "normal" : "reveillon")}
-          className="text-2xl bg-white/70 backdrop-blur border border-white/60 shadow-md rounded-full px-3 py-2 hover:scale-110 transition"
+          onClick={() => handleToggle("reveillon")}
+          className={`text-2xl ${
+            mode === "reveillon"
+              ? "bg-yellow-100/80 border-yellow-400"
+              : "bg-white/70 border-white/60"
+          } backdrop-blur shadow-md rounded-full px-3 py-2 hover:scale-110 transition`}
           title="Ativar modo Réveillon 🎆"
         >
           🎆
         </button>
       </div>
 
-      {mode === "natal" && <NatalOverlay />}
-      {mode === "reveillon" && <ReveillonOverlay />}
+      {/* Fade de transição */}
+      <AnimatePresence>
+        {transitioning && (
+          <motion.div
+            className="fixed inset-0 bg-white/60 backdrop-blur-md z-[998]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Overlays */}
+      <AnimatePresence mode="wait">
+        {mode === "natal" && <NatalOverlay key="natal" />}
+        {mode === "reveillon" && <ReveillonOverlay key="reveillon" />}
+      </AnimatePresence>
     </>
   );
 }
 
-/* 🎄 Natal */
+/* ============================= 🎄 NATAL ============================= */
+
 function NatalOverlay() {
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[999]">
+    <motion.div
+      className="fixed inset-0 pointer-events-none overflow-hidden z-[999]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }}
+    >
       <SnowFall />
       <GuirlandaTop />
-    </div>
+    </motion.div>
   );
 }
 
@@ -57,7 +110,10 @@ function SnowFall() {
           }}
           animate={{
             y: ["0%", "120%"],
-            x: [Math.random() * window.innerWidth, Math.random() * window.innerWidth],
+            x: [
+              Math.random() * window.innerWidth,
+              Math.random() * window.innerWidth,
+            ],
             opacity: [1, 0.5, 1],
           }}
           transition={{
@@ -100,13 +156,20 @@ function GuirlandaTop() {
   );
 }
 
-/* 🎆 Reveillon */
+/* ============================= 🎆 RÉVEILLON ============================= */
+
 function ReveillonOverlay() {
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[999]">
+    <motion.div
+      className="fixed inset-0 pointer-events-none overflow-hidden z-[999]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }}
+    >
       <Fireworks />
       <Confetti />
-    </div>
+    </motion.div>
   );
 }
 
