@@ -56,7 +56,9 @@ export default function CasesShowcase() {
     { top: "12%", left: "8%" },
     { top: "18%", left: "70%" },
     { top: "58%", left: "12%" },
-    { top: "42%", left: "78%" },
+    { top: "30%", left: "20%" },
+    { top: "25%", left: "5%" },
+    { top: "42%", left: "30%" },
   ];
 
   const hidden = { opacity: 0, y: 80 } as const;
