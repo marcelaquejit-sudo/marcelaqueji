@@ -40,7 +40,7 @@ export default function CasesShowcase() {
       type: "video",
       href: "https://youtu.be/9Qkr9e4UAtY",
       label: "Identidade Visual",
-      poster: "https://imgur.com/undefined",
+      poster: "https://youtu.be/9Qkr9e4UAtY",
       sources: [{ src: "https://youtu.be/9Qkr9e4UAtY", type: "video/mp4" }],
     },
     {
@@ -48,6 +48,7 @@ export default function CasesShowcase() {
       type: "video",
       href: "https://youtu.be/7Ooc-Y4pKpo",
       label: "Identidade Visual",
+      poster: "https://youtu.be/7Ooc-Y4pKpo",
       sources: [{ src: "https://youtu.be/7Ooc-Y4pKpo", type: "video/mp4" }],
     },
   ];
@@ -57,8 +58,8 @@ export default function CasesShowcase() {
     { top: "18%", left: "70%" },
     { top: "58%", left: "12%" },
     { top: "30%", left: "20%" },
-    { top: "25%", left: "5%" },
-    { top: "42%", left: "30%" },
+    { top: "25%", left: "70%" },
+    { top: "42%", left: "70%" },
   ];
 
   const hidden = { opacity: 0, y: 80 } as const;
@@ -94,7 +95,7 @@ export default function CasesShowcase() {
       {/* Fundo liso: nenhum gradiente extra */}
 
       <h2 className="relative z-10 text-center silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-10">
-        Resultados falam mais que promessas
+        RESULTADOS
       </h2>
 
       <div className="absolute inset-0">
