@@ -66,7 +66,7 @@ export default function Services3DPanel() {
       </div>
 
       {/* Anel 3D com os cards */}
-      <div className="relative flex-1 grid place-items-center mt-5">
+      <div className="relative flex-1 grid place-items-center mt-20">
         <div className="relative [perspective:1600px] h-[420px] w-[420px]">
           <div className="ring3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             {items.map((it, i) => {
