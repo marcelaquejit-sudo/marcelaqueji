@@ -57,7 +57,6 @@ export default function Services3DPanel() {
         <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
           SERVIÇOS
         </h2>
-        <p className="mt-2 text-gray-500">Clique em um card para ver os detalhes</p>
       </div>
 
       {/* Layout: no mobile empilha; no desktop duas colunas (carrossel | painel) */}
