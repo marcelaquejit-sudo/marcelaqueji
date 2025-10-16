@@ -16,7 +16,7 @@ export default function AboutMeSection() {
   const [q, setQ] = React.useState(320);
   const [dot, setDot] = React.useState(2);
   const [thr, setThr] = React.useState(80);
-  const [showInfo, setShowInfo] = React.useState(false); // ⬅️ controla hover do card (desktop)
+  const [showInfo, setShowInfo] = React.useState(false); // controla hover do card (desktop)
 
   const IMG_URL = "https://i.imgur.com/rzOHNIu.jpg";
 
@@ -30,8 +30,7 @@ export default function AboutMeSection() {
     const ratio = img.height / img.width;
     const w = samples;
     const h = Math.round(samples * ratio);
-    off.width = w;
-    off.height = h;
+    off.width = w; off.height = h;
     const octx = off.getContext("2d", { willReadFrequently: true })!;
     octx.drawImage(img, 0, 0, w, h);
     const data = octx.getImageData(0, 0, w, h).data;
@@ -48,8 +47,7 @@ export default function AboutMeSection() {
           pts.push({
             x: (Math.random() * 2 - 1) * 1.8,
             y: (Math.random() * 2 - 1) * 1.8,
-            tx: nx,
-            ty: ny,
+            tx: nx, ty: ny,
             r: (Math.random() * 0.6 + 0.4) * dot,
             d: Math.random() * 0.7,
           });
@@ -120,7 +118,7 @@ export default function AboutMeSection() {
       }
       ctx.restore();
 
-      // retrato (partículas)
+      // retrato
       const scale = Math.min(s.W, s.H) * 0.48;
       ctx.save();
       ctx.translate(s.W / 2, s.H / 2);
@@ -174,21 +172,19 @@ export default function AboutMeSection() {
     <section
       id="sobre"
       className="relative w-full min-h-[80vh] overflow-hidden flex items-center justify-center scroll-mt-24"
-      // ⬇️ mostra/oculta o card no desktop
       onMouseEnter={() => setShowInfo(true)}
       onMouseLeave={() => setShowInfo(false)}
     >
-      {/* Canvas ocupa a seção inteira */}
+      {/* Canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full touch-none" />
 
-      {/* ⬇️ FADE no final da imagem/área animada */}
+      {/* Fade no rodapé (mobile e desktop) */}
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-28
-                   bg-gradient-to-b from-transparent to-white"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-white"
         aria-hidden="true"
       />
 
-      {/* === CONTROLES (ESCONDIDOS NO MOBILE) === */}
+      {/* ===== CONTROLES — DESKTOP (mantém como estava) ===== */}
       <div className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-2xl bg-white/90 text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] p-4 backdrop-blur flex-col gap-3 w-[220px]">
         <div className="font-semibold text-[12px]">Foto → Partículas 2D</div>
         <label className="text-[12px] opacity-80">Resolução</label>
@@ -202,7 +198,53 @@ export default function AboutMeSection() {
         </button>
       </div>
 
-      {/* === CARD “SOBRE MIM” — desktop apenas; aparece no hover da seção === */}
+      {/* ===== CONTROLES — MOBILE: barra mínima no topo ===== */}
+      <div
+        className="md:hidden absolute top-2 left-1/2 -translate-x-1/2 z-10 rounded-2xl border border-gray-200
+                   bg-white/75 backdrop-blur px-2 py-1 shadow-[0_6px_24px_rgba(0,0,0,0.08)]
+                   flex items-center gap-2"
+      >
+        {/* Sliders compactos lado a lado */}
+        <input
+          type="range"
+          min={80}
+          max={520}
+          value={q}
+          onChange={(e) => setQ(parseInt(e.target.value))}
+          className="w-20 h-2 accent-gray-700"
+          aria-label="Resolução"
+          title="Resolução"
+        />
+        <input
+          type="range"
+          min={1}
+          max={5}
+          value={dot}
+          onChange={(e) => setDot(parseInt(e.target.value))}
+          className="w-20 h-2 accent-gray-700"
+          aria-label="Espessura"
+          title="Espessura"
+        />
+        <input
+          type="range"
+          min={0}
+          max={220}
+          value={thr}
+          onChange={(e) => setThr(parseInt(e.target.value))}
+          className="w-20 h-2 accent-gray-700"
+          aria-label="Contraste"
+          title="Contraste"
+        />
+        <button
+          onClick={replay}
+          className="h-7 px-3 rounded-lg text-[11px] font-semibold bg-gray-900 text-white hover:opacity-90 transition"
+          aria-label="Repetir animação"
+        >
+          Repetir
+        </button>
+      </div>
+
+      {/* ===== CARD “SOBRE MIM” — desktop: aparece no hover da seção; mobile continua oculto ===== */}
       <div
         className={[
           "hidden md:block absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-10",
