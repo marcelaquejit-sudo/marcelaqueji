@@ -259,7 +259,7 @@ function IceOverlay({ docHeight }: { docHeight: number }) {
           position: "absolute",
           inset: 0,
           background:
-            "radial-gradient(circle at 50% 20%, rgba(255,255,255,.15), rgba(255,255,255,0) 60%), url('https://i.imgur.com/kOIx4g2.png') repeat top left / cover",
+          "radial-gradient(circle at 50% 20%, rgba(255,255,255,.15), rgba(255,255,255,0) 60%)",
           filter: "blur(4px) brightness(1.1)",
           mixBlendMode: "lighten",
         }}
