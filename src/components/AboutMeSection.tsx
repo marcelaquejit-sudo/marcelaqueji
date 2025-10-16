@@ -29,7 +29,8 @@ export default function AboutMeSection() {
     const ratio = img.height / img.width;
     const w = samples;
     const h = Math.round(samples * ratio);
-    off.width = w; off.height = h;
+    off.width = w;
+    off.height = h;
     const octx = off.getContext("2d", { willReadFrequently: true })!;
     octx.drawImage(img, 0, 0, w, h);
     const data = octx.getImageData(0, 0, w, h).data;
@@ -99,7 +100,7 @@ export default function AboutMeSection() {
       ctx.clearRect(0, 0, s.W, s.H);
       if (!s.points.length) return;
 
-      // fundo
+      // partículas de fundo
       ctx.save();
       ctx.translate(s.W / 2, s.H / 2);
       ctx.fillStyle = "rgba(205,210,215,0.9)";
@@ -118,7 +119,7 @@ export default function AboutMeSection() {
       }
       ctx.restore();
 
-      // retrato (partículas)
+      // retrato
       const scale = Math.min(s.W, s.H) * 0.48;
       ctx.save();
       ctx.translate(s.W / 2, s.H / 2);
@@ -139,6 +140,7 @@ export default function AboutMeSection() {
 
     function onMove(e: PointerEvent) {
       const rect = canvas.getBoundingClientRect();
+      const s = stateRef.current;
       s.mouse.x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
       s.mouse.y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
     }
@@ -170,104 +172,40 @@ export default function AboutMeSection() {
   return (
     <section
       id="sobre"
-      // desktop: altura generosa; mobile: altura menor com animação no topo
-      className="relative w-full overflow-hidden scroll-mt-24"
+      className="relative w-full min-h-[80vh] overflow-hidden flex items-center justify-center scroll-mt-24"
     >
-      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 pt-6 md:pt-10 pb-8 md:pb-12">
-        {/* ======= CANVAS WRAPPER =======
-            Mobile: quadro com aspect ratio no TOPO
-            Desktop: canvas cobre a seção (absolute) */}
-        <div className="relative md:static">
-          {/* Wrapper que muda com breakpoint */}
-          <div className="relative md:absolute md:inset-0">
-            {/* Quadro (só afeta mobile/tablet) */}
-            <div className="relative aspect-[16/10] sm:aspect-[16/9] md:aspect-auto md:h-[68vh] rounded-3xl overflow-hidden border border-gray-200 bg-white/60 backdrop-blur shadow-[0_10px_60px_rgba(0,0,0,0.06)]">
-              <canvas ref={canvasRef} className="absolute inset-0 w-full h-full touch-none" />
-              {/* === Barra compacta de controles (MOBILE) === */}
-              <div className="md:hidden absolute inset-x-0 bottom-0 border-t border-gray-200 bg-white/75 backdrop-blur px-3 py-2">
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min={80}
-                    max={520}
-                    value={q}
-                    onChange={(e) => setQ(parseInt(e.target.value))}
-                    className="flex-1"
-                    aria-label="Resolução"
-                    title="Resolução"
-                  />
-                  <input
-                    type="range"
-                    min={1}
-                    max={5}
-                    value={dot}
-                    onChange={(e) => setDot(parseInt(e.target.value))}
-                    className="flex-1"
-                    aria-label="Espessura"
-                    title="Espessura"
-                  />
-                  <input
-                    type="range"
-                    min={0}
-                    max={220}
-                    value={thr}
-                    onChange={(e) => setThr(parseInt(e.target.value))}
-                    className="flex-1"
-                    aria-label="Contraste"
-                    title="Contraste"
-                  />
-                  <button
-                    onClick={replay}
-                    className="shrink-0 h-9 px-3 rounded-lg text-[13px] font-semibold bg-gray-900 text-white hover:opacity-90 transition"
-                    aria-label="Repetir animação"
-                  >
-                    Repetir
-                  </button>
-                </div>
-              </div>
-            </div>
+      {/* Canvas ocupa a seção inteira */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full touch-none" />
 
-            {/* ======= CONTROLES DESKTOP (ESQUERDA) ======= */}
-            <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 z-10">
-              <div className="w-[240px] rounded-2xl bg-white/90 text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] p-4 backdrop-blur">
-                <div className="font-semibold text-[12px]">Foto → Partículas 2D</div>
-                <div className="mt-3 flex flex-col gap-3 text-[12px]">
-                  <label className="opacity-80">Resolução</label>
-                  <input className="accent-gray-700" type="range" min={80} max={520} value={q} onChange={(e) => setQ(parseInt(e.target.value))} />
-                  <label className="opacity-80">Espessura</label>
-                  <input className="accent-gray-700" type="range" min={1} max={5} value={dot} onChange={(e) => setDot(parseInt(e.target.value))} />
-                  <label className="opacity-80">Contraste</label>
-                  <input className="accent-gray-700" type="range" min={0} max={220} value={thr} onChange={(e) => setThr(parseInt(e.target.value))} />
-                  <button onClick={replay} className="w-full h-11 rounded-xl font-semibold bg-gray-900 text-white hover:opacity-90 transition">
-                    Repetir animação
-                  </button>
-                </div>
-              </div>
-            </div>
+      {/* === CONTROLES (ESCONDIDOS NO MOBILE) === */}
+      <div className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-2xl bg-white/90 text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] p-4 backdrop-blur flex-col gap-3 w-[220px]">
+        <div className="font-semibold text-[12px]">Foto → Partículas 2D</div>
+        <label className="text-[12px] opacity-80">Resolução</label>
+        <input className="accent-gray-700" type="range" min={80} max={520} value={q} onChange={(e) => setQ(parseInt(e.target.value))} />
+        <label className="text-[12px] opacity-80">Espessura</label>
+        <input className="accent-gray-700" type="range" min={1} max={5} value={dot} onChange={(e) => setDot(parseInt(e.target.value))} />
+        <label className="text-[12px] opacity-80">Contraste</label>
+        <input className="accent-gray-700" type="range" min={0} max={220} value={thr} onChange={(e) => setThr(parseInt(e.target.value))} />
+        <button onClick={replay} className="mt-1 h-11 rounded-xl font-semibold bg-gray-900 text-white hover:opacity-90 transition">
+          Repetir animação
+        </button>
+      </div>
 
-            {/* ======= CARD SOBRE MIM (DIREITA) — escondido no mobile ======= */}
-            <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 z-10">
-              <div className="w-[min(36vw,520px)] rounded-3xl border border-white/60 bg-white/85 backdrop-blur-xl shadow-[0_30px_120px_rgba(0,0,0,0.10)] p-10">
-                <h2 className="silver-kinetic text-4xl font-extrabold tracking-tight mb-4">
-                  SOBRE MIM
-                </h2>
-                <p className="text-gray-700 leading-relaxed">
-                  <strong>Muito prazer, eu sou a Marcela Queji!</strong><br />
-                  Tenho 25 anos e desde 2020 aprendo e atuo nesse ramo. Comecei com marketing e design e, com o tempo,
-                  aprofundei processos e tecnologia. Depois de dezenas de certificados e atendimentos, aprendi que a melhor entrega
-                  é a que <em>funciona com eficiência</em> — planejada, sofisticada e resolutiva.
-                </p>
-                <p className="mt-3 text-gray-700 leading-relaxed">
-                  Hoje, consigo oferecer soluções completas para a sua empresa.<br />
-                  <strong>Você me diz o que precisa, o resto é comigo.</strong>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* Espaço depois do quadro no mobile (pequeno) */}
-        <div className="md:hidden h-3" />
+      {/* === CARD “SOBRE MIM” (ESCONDIDO NO MOBILE) === */}
+      <div className="hidden md:block absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-10 w-[min(36vw,520px)] rounded-3xl border border-white/60 bg-white/85 backdrop-blur-xl shadow-[0_30px_120px_rgba(0,0,0,0.10)] p-10">
+        <h2 className="silver-kinetic text-4xl font-extrabold tracking-tight mb-4">SOBRE MIM</h2>
+        <p className="text-gray-700 leading-relaxed">
+          <strong>Muito prazer, eu sou a Marcela Queji!</strong><br />
+          Tenho 25 anos e desde 2020 aprendo e atuo nesse ramo. Comecei com marketing e design e, com o tempo,
+          aprofundei processos e tecnologia. Depois de dezenas de certificados e atendimentos, aprendi que a melhor entrega
+          é a que <em>funciona com eficiência</em> — planejada, sofisticada e resolutiva.
+        </p>
+        <p className="mt-3 text-gray-700 leading-relaxed">
+          Hoje, consigo oferecer soluções completas para a sua empresa.<br />
+          <strong>Você me diz o que precisa, o resto é comigo.</strong>
+        </p>
       </div>
     </section>
   );
 }
+
