@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Services3DPanelProps = {
-  // NUDGE (px) — posição do carrossel
   mobileNudgeY?: number;
   desktopNudgeY?: number;
   mobileNudgeX?: number;
   desktopNudgeX?: number;
-  // TAMANHO DO ANEL (px)
   ringSizeMobile?: number;
   ringSizeDesktop?: number;
-  // PROFUNDIDADE (px) — raio do anel 3D
   translateZMobile?: number;
   translateZDesktop?: number;
 };
@@ -28,124 +25,73 @@ function useIsDesktop(minWidth = 1024) {
 }
 
 export default function Services3DPanel({
-  // ↓ “perto, seguro”
-  mobileNudgeY = 16,
-  desktopNudgeY = 12,
+  // presets “perto, seguro”
+  mobileNudgeY = -8,       // sobe no mobile
+  desktopNudgeY = -4,      // sobe no desktop
   mobileNudgeX = 0,
   desktopNudgeX = 0,
-  ringSizeMobile = 320,
+  ringSizeMobile = 300,    // menor no mobile
   ringSizeDesktop = 440,
-  translateZMobile = 200,
+  translateZMobile = 190,  // raio um pouco menor no mobile
   translateZDesktop = 260,
 }: Services3DPanelProps) {
   const [selected, setSelected] = useState<any>(null);
   const isDesktop = useIsDesktop();
 
-  // Valores responsivos calculados em runtime
   const ringSize = isDesktop ? ringSizeDesktop : ringSizeMobile;
   const translateZ = isDesktop ? translateZDesktop : translateZMobile;
   const nudgeY = (isDesktop ? desktopNudgeY : mobileNudgeY) || 0;
   const nudgeX = (isDesktop ? desktopNudgeX : mobileNudgeX) || 0;
 
   const items = [
-    {
-      key: "design",
-      title: "DESIGN GRÁFICO",
-      desc: "Identidade visual e materiais que elevam sua marca.",
-      img: "https://i.imgur.com/K25QoJ6.png",
-      services: [
-        "IDENTIDADE VISUAL",
-        "MATERIAIS COMERCIAIS",
-        "ARTES PARA REDES",
-        "E-BOOKS",
-        "MOCKUPS",
-        "VISUAL 3D",
-      ],
-    },
-    {
-      key: "dev",
-      title: "DESENVOLVIMENTO DE SISTEMAS",
-      desc: "Sites e sistemas sob medida, com foco em eficiência.",
-      img: "https://i.imgur.com/9PFreUn.png",
-      services: [
-        "LANDING PAGES",
-        "SITES",
-        "E-COMMERCE",
-        "DASHBOARDS",
-        "SaaS SOB DEMANDA",
-      ],
-    },
-    {
-      key: "mkt",
-      title: "MARKETING",
-      desc: "Crescimento orientado a dados e presença relevante.",
-      img: "https://i.imgur.com/itAZ9xR.png",
-      services: [
-        "GESTÃO DE REDES",
-        "TRÁFEGO PAGO",
-        "GOOGLE MEU NEGÓCIO",
-        "FUNIS",
-        "CONSULTORIA",
-      ],
-    },
+    { key: "design", title: "DESIGN GRÁFICO", desc: "Identidade visual e materiais que elevam sua marca.", img: "https://i.imgur.com/K25QoJ6.png", services: ["IDENTIDADE VISUAL","MATERIAIS COMERCIAIS","ARTES PARA REDES","E-BOOKS","MOCKUPS","VISUAL 3D"] },
+    { key: "dev", title: "DESENVOLVIMENTO DE SISTEMAS", desc: "Sites e sistemas sob medida, com foco em eficiência.", img: "https://i.imgur.com/9PFreUn.png", services: ["LANDING PAGES","SITES","E-COMMERCE","DASHBOARDS","SaaS SOB DEMANDA"] },
+    { key: "mkt", title: "MARKETING", desc: "Crescimento orientado a dados e presença relevante.", img: "https://i.imgur.com/itAZ9xR.png", services: ["GESTÃO DE REDES","TRÁFEGO PAGO","GOOGLE MEU NEGÓCIO","FUNIS","CONSULTORIA"] },
   ];
 
   return (
     <section
       id="servicos"
-      className="relative w-full min-h-[110vh] overflow-hidden text-gray-700 flex flex-col lg:flex-row items-center justify-center gap-8 px-6 pt-6 pb-16 scroll-mt-24"
+      className="relative w-full min-h-[90vh] overflow-hidden text-gray-700 flex flex-col lg:flex-row items-center justify-start gap-8 px-6 pt-6 pb-14 scroll-mt-24"
     >
-      {/* Fundo decorativo */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true" />
 
-      {/* Título */}
+      {/* Título fixo no topo */}
       <div className="absolute top-0 w-full text-center">
         <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
           SERVIÇOS
         </h2>
-        <p className="mt-2 text-gray-500">Clique em um card para ver os detalhes</p>
+        <p className="mt-1 text-gray-500">Clique em um card para ver os detalhes</p>
       </div>
 
-      {/* Carrossel 3D (anel) — agora com controle fino de posição e tamanho */}
+      {/* Carrossel 3D: agora encosta no topo */}
       <div
-        className="relative flex-1 grid place-items-center"
+        className="relative flex-1"
         style={{
-          // empurra o anel conforme os nudges configurados
-          marginTop: nudgeY,
+          // empurra em relação ao topo do section
+          marginTop: `calc(2.75rem + ${nudgeY}px)`, // ~altura do título/sub + ajuste
           marginLeft: nudgeX,
         }}
       >
         <div
-          className="relative [perspective:1600px]"
-          style={{
-            height: `${ringSize}px`,
-            width: `${ringSize}px`,
-          }}
+          className="mx-auto relative [perspective:1600px]"
+          style={{ height: `${ringSize}px`, width: `${ringSize}px` }}
         >
-          <div className="ring3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="ring3d absolute left-1/2 top-0 translate-x-[-50%]">
             {items.map((it, i) => {
               const angle = (360 / items.length) * i;
               const isActive = selected?.key === it.key;
-
               return (
                 <div
                   key={it.key}
-                  className={`card3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d] cursor-pointer transition-transform duration-700 ${
-                    isActive
-                      ? "scale-110 brightness-110 animate-float"
-                      : "hover:scale-105"
+                  className={`card3d absolute left-1/2 top-[140px] -translate-x-1/2 [transform-style:preserve-3d] cursor-pointer transition-transform duration-700 ${
+                    isActive ? "scale-110 brightness-110 animate-float" : "hover:scale-105"
                   }`}
-                  style={{
-                    transform: `rotateY(${angle}deg) translateZ(${translateZ}px)`,
-                  }}
+                  style={{ transform: `rotateY(${angle}deg) translateZ(${translateZ}px)` }}
                   onClick={() => setSelected(it)}
                 >
                   <div className="relative h-[260px] w-[200px] rounded-3xl border border-white/40 backdrop-blur-2xl bg-gradient-radial from-white/70 via-white/30 to-transparent shadow-[0_10px_60px_rgba(0,0,0,0.08)] overflow-hidden">
-                    <img
-                      src={it.img}
-                      alt={it.title}
-                      className="h-28 w-28 object-contain [filter:grayscale(100%)] drop-shadow-[0_2px_6px_rgba(255,255,255,0.8)] mx-auto mt-16"
-                    />
+                    <img src={it.img} alt={it.title} className="h-28 w-28 object-contain [filter:grayscale(100%)] drop-shadow-[0_2px_6px_rgba(255,255,255,0.8)] mx-auto mt-16" />
                   </div>
                 </div>
               );
@@ -154,7 +100,6 @@ export default function Services3DPanel({
         </div>
       </div>
 
-      {/* Painel de detalhes */}
       <AnimatePresence>
         {selected && (
           <motion.div
@@ -181,10 +126,7 @@ export default function Services3DPanel({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
               {selected.services.map((svc: string) => (
-                <div
-                  key={svc}
-                  className="relative rounded-2xl border border-white/50 bg-white/60 backdrop-blur-xl px-5 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_18px_60px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-0.5"
-                >
+                <div key={svc} className="relative rounded-2xl border border-white/50 bg-white/60 backdrop-blur-xl px-5 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_18px_60px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-0.5">
                   <span className="relative z-10 text-sm sm:text-base font-semibold uppercase text-gray-700 tracking-wide">
                     {svc}
                   </span>
@@ -192,9 +134,7 @@ export default function Services3DPanel({
               ))}
             </div>
 
-            {selected.desc && (
-              <p className="mt-4 text-sm text-gray-500">{selected.desc}</p>
-            )}
+            {selected.desc && <p className="mt-4 text-sm text-gray-500">{selected.desc}</p>}
           </motion.div>
         )}
       </AnimatePresence>
