@@ -5,10 +5,10 @@ import SiteFooter from "./components/SiteFooter";
 import HeroKinetic from "./components/HeroKinetic";
 import Services3DPanel from "./components/Services3DPanel";
 import ExperienceYearsSection from "./components/ExperienceYearsSection";
+import AboutMeSection from "./components/AboutMeSection";
 import CasesShowcase from "./components/CasesShowcase";
 import CtaSection from "./components/CtaSection";
 import FeedbackFloatingSection from "./components/FeedbackFloatingSection";
-import AboutMeSection from "./components/AboutMeSection";
 
 export default function App() {
   return (
@@ -18,10 +18,10 @@ export default function App() {
       <HeroKinetic />
       <Services3DPanel />
       <ExperienceYearsSection />
+       <AboutMeSection />
       <CasesShowcase />
       <CtaSection />
       <FeedbackFloatingSection />
-      <AboutMeSection />
       <SiteFooter />
     </main>
   );
