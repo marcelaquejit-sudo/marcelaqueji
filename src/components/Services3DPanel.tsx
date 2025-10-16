@@ -1,8 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Services3DPanel() {
+type Services3DPanelProps = {
+  // NUDGE (px) — posição do carrossel
+  mobileNudgeY?: number;
+  desktopNudgeY?: number;
+  mobileNudgeX?: number;
+  desktopNudgeX?: number;
+  // TAMANHO DO ANEL (px)
+  ringSizeMobile?: number;
+  ringSizeDesktop?: number;
+  // PROFUNDIDADE (px) — raio do anel 3D
+  translateZMobile?: number;
+  translateZDesktop?: number;
+};
+
+function useIsDesktop(minWidth = 1024) {
+  const [isDesk, setIsDesk] = useState<boolean>(false);
+  useEffect(() => {
+    const mq = window.matchMedia(`(min-width:${minWidth}px)`);
+    const update = () => setIsDesk(mq.matches);
+    update();
+    mq.addEventListener?.("change", update);
+    return () => mq.removeEventListener?.("change", update);
+  }, [minWidth]);
+  return isDesk;
+}
+
+export default function Services3DPanel({
+  mobileNudgeY = 48,
+  desktopNudgeY = 0,
+  mobileNudgeX = 0,
+  desktopNudgeX = 0,
+  ringSizeMobile = 360,
+  ringSizeDesktop = 420,
+  translateZMobile = 220,
+  translateZDesktop = 260,
+}: Services3DPanelProps) {
   const [selected, setSelected] = useState<any>(null);
+  const isDesktop = useIsDesktop();
+
+  // Valores responsivos calculados em runtime
+  const ringSize = isDesktop ? ringSizeDesktop : ringSizeMobile;
+  const translateZ = isDesktop ? translateZDesktop : translateZMobile;
+  const nudgeY = (isDesktop ? desktopNudgeY : mobileNudgeY) || 0;
+  const nudgeX = (isDesktop ? desktopNudgeX : mobileNudgeX) || 0;
 
   const items = [
     {
@@ -50,24 +92,35 @@ export default function Services3DPanel() {
   return (
     <section
       id="servicos"
-      className="relative w-full min-h-[110vh] overflow-hidden text-gray-700 flex flex-col lg:flex-row items-center justify-center gap-8 px-6 py-16 scroll-mt-24"
+      className="relative w-full min-h-[110vh] overflow-hidden text-gray-700 flex flex-col lg:flex-row items-center justify-center gap-8 px-6 pt-6 pb-16 scroll-mt-24"
     >
-      {/* Camada de fundo (apenas decorativa) */}
+      {/* Fundo decorativo */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true" />
 
-      {/* Título / instruções */}
-      <div className="absolute top-10 w-full text-center">
+      {/* Título */}
+      <div className="absolute top-0 w-full text-center">
         <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
           SERVIÇOS
         </h2>
-        <p className="mt-2 text-gray-500">
-          Clique em um card para ver os detalhes
-        </p>
+        <p className="mt-2 text-gray-500">Clique em um card para ver os detalhes</p>
       </div>
 
-      {/* Anel 3D com os cards */}
-      <div className="relative flex-1 grid place-items-center mt-16">
-        <div className="relative [perspective:1600px] h-[420px] w-[420px]">
+      {/* Carrossel 3D (anel) — agora com controle fino de posição e tamanho */}
+      <div
+        className="relative flex-1 grid place-items-center"
+        style={{
+          // empurra o anel conforme os nudges configurados
+          marginTop: nudgeY,
+          marginLeft: nudgeX,
+        }}
+      >
+        <div
+          className="relative [perspective:1600px]"
+          style={{
+            height: `${ringSize}px`,
+            width: `${ringSize}px`,
+          }}
+        >
           <div className="ring3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             {items.map((it, i) => {
               const angle = (360 / items.length) * i;
@@ -81,7 +134,9 @@ export default function Services3DPanel() {
                       ? "scale-110 brightness-110 animate-float"
                       : "hover:scale-105"
                   }`}
-                  style={{ transform: `rotateY(${angle}deg) translateZ(260px)` }}
+                  style={{
+                    transform: `rotateY(${angle}deg) translateZ(${translateZ}px)`,
+                  }}
                   onClick={() => setSelected(it)}
                 >
                   <div className="relative h-[260px] w-[200px] rounded-3xl border border-white/40 backdrop-blur-2xl bg-gradient-radial from-white/70 via-white/30 to-transparent shadow-[0_10px_60px_rgba(0,0,0,0.08)] overflow-hidden">
