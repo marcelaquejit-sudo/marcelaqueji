@@ -50,92 +50,99 @@ export default function Services3DPanel() {
   return (
     <section
       id="servicos"
-      className="relative w-full text-gray-700 flex flex-col items-center justify-start px-6 py-12 gap-6 scroll-mt-24"
+      className="relative w-full text-gray-700 px-6 pt-10 pb-24 scroll-mt-24"
     >
-      {/* Título em fluxo normal, bem pertinho do carrossel */}
-      <div className="w-full text-center">
+      {/* Título */}
+      <div className="w-full text-center mb-6 sm:mb-8">
         <h2 className="silver-kinetic text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
           SERVIÇOS
         </h2>
         <p className="mt-2 text-gray-500">Clique em um card para ver os detalhes</p>
       </div>
 
-      {/* Carrossel centralizado em todas as telas */}
-      <div className="relative mx-auto">
-        {/* tamanhos responsivos para manter o anel no centro e proporção ok */}
-        <div className="relative [perspective:1600px] h-[320px] w-[320px] sm:h-[360px] sm:w-[360px] md:h-[400px] md:w-[400px]">
-          <div className="ring3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            {items.map((it, i) => {
-              const angle = (360 / items.length) * i;
-              const isActive = selected?.key === it.key;
-              return (
-                <div
-                  key={it.key}
-                  className={`card3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d] cursor-pointer transition-transform duration-700 ${
-                    isActive ? "scale-110 brightness-110 animate-float" : "hover:scale-105"
-                  }`}
-                  style={{ transform: `rotateY(${angle}deg) translateZ(240px)` }}
-                  onClick={() => setSelected(it)}
-                >
-                  <div className="relative h-[240px] w-[184px] sm:h-[250px] sm:w-[192px] md:h-[260px] md:w-[200px] rounded-3xl border border-white/40 backdrop-blur-2xl bg-gradient-radial from-white/70 via-white/30 to-transparent shadow-[0_10px_60px_rgba(0,0,0,0.08)] overflow-hidden">
-                    <img
-                      src={it.img}
-                      alt={it.title}
-                      className="h-24 w-24 sm:h-28 sm:w-28 object-contain [filter:grayscale(100%)] drop-shadow-[0_2px_6px_rgba(255,255,255,0.8)] mx-auto mt-14 sm:mt-16"
-                    />
+      {/* Layout: no mobile empilha; no desktop duas colunas (carrossel | painel) */}
+      <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        {/* Carrossel 3D */}
+        <div className="relative flex justify-center lg:justify-center order-1 lg:order-none">
+          {/* Contêiner sem cortes e com espaço próprio */}
+          <div className="relative [perspective:1600px] h-[340px] w-[340px] sm:h-[380px] sm:w-[380px] md:h-[420px] md:w-[420px] overflow-visible z-0">
+            <div className="ring3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              {items.map((it, i) => {
+                const angle = (360 / items.length) * i;
+                const isActive = (selected?.key ?? "design") === it.key;
+                return (
+                  <div
+                    key={it.key}
+                    className={`card3d absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d] cursor-pointer transition-transform duration-700 ${
+                      isActive ? "scale-110 brightness-110 animate-float" : "hover:scale-105"
+                    }`}
+                    style={{ transform: `rotateY(${angle}deg) translateZ(260px)` }}
+                    onClick={() => setSelected(it)}
+                    aria-label={`Selecionar ${it.title}`}
+                  >
+                    <div className="relative h-[240px] w-[190px] sm:h-[260px] sm:w-[200px] rounded-3xl border border-white/40 backdrop-blur-2xl bg-gradient-radial from-white/70 via-white/30 to-transparent shadow-[0_10px_60px_rgba(0,0,0,0.08)] overflow-hidden">
+                      <img
+                        src={it.img}
+                        alt={it.title}
+                        className="h-24 w-24 sm:h-28 sm:w-28 object-contain [filter:grayscale(100%)] drop-shadow-[0_2px_6px_rgba(255,255,255,0.8)] mx-auto mt-14 sm:mt-16"
+                      />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Painel de detalhes: abaixo e central no mobile; ao lado em telas grandes */}
-      <AnimatePresence>
-        {selected && (
-          <motion.div
-            key={selected.key}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 12 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="relative w-full max-w-2xl p-4 sm:p-6 lg:p-8 text-center sm:text-left"
-          >
-            <button
-              onClick={() => setSelected(null)}
-              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 text-gray-400 hover:text-gray-600"
-              aria-label="Fechar detalhes"
-            >
-              ✕
-            </button>
-
-            <div className="mb-6">
-              <h3 className="silver-kinetic text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">
-                {selected.title}
-              </h3>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
-              {selected.services.map((svc: string) => (
-                <div
-                  key={svc}
-                  className="relative rounded-2xl border border-white/50 bg-white/60 backdrop-blur-xl px-5 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_18px_60px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-0.5"
+        {/* Painel de informações (ao lado no desktop, abaixo no mobile) */}
+        <div className="order-2 lg:order-none z-10">
+          <AnimatePresence mode="wait">
+            {(selected ?? items[0]) && (
+              <motion.div
+                key={(selected ?? items[0]).key}
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 40 }}
+                transition={{ duration: 0.45, ease: "easeOut" }}
+                className="relative max-w-2xl mx-auto lg:mx-0"
+              >
+                <button
+                  onClick={() => setSelected(null)}
+                  className="absolute top-2 right-2 z-10 text-gray-400 hover:text-gray-600 lg:hidden"
+                  aria-label="Fechar detalhes"
                 >
-                  <span className="relative z-10 text-sm sm:text-base font-semibold uppercase text-gray-700 tracking-wide">
-                    {svc}
-                  </span>
-                </div>
-              ))}
-            </div>
+                  ✕
+                </button>
 
-            {selected.desc && (
-              <p className="mt-4 text-sm text-gray-500">{selected.desc}</p>
+                <div className="mb-6">
+                  <h3 className="silver-kinetic text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">
+                    {(selected ?? items[0]).title}
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
+                  {(selected ?? items[0]).services.map((svc: string) => (
+                    <div
+                      key={svc}
+                      className="relative rounded-2xl border border-white/50 bg-white/60 backdrop-blur-xl px-5 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_18px_60px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-0.5"
+                    >
+                      <span className="relative z-10 text-sm sm:text-base font-semibold uppercase text-gray-700 tracking-wide">
+                        {svc}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {(selected ?? items[0]).desc && (
+                  <p className="mt-4 text-sm text-gray-500">
+                    {(selected ?? items[0]).desc}
+                  </p>
+                )}
+              </motion.div>
             )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </AnimatePresence>
+        </div>
+      </div>
     </section>
   );
 }
-
