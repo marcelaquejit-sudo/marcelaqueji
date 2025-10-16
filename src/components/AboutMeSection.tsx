@@ -16,7 +16,7 @@ export default function AboutMeSection() {
   const [q, setQ] = React.useState(320);
   const [dot, setDot] = React.useState(2);
   const [thr, setThr] = React.useState(80);
-  const [showInfo, setShowInfo] = React.useState(false); // desktop: hover para mostrar o card
+  const [showInfo, setShowInfo] = React.useState(false); // controla hover do card (desktop)
 
   const IMG_URL = "https://i.imgur.com/rzOHNIu.jpg";
 
@@ -175,95 +175,16 @@ export default function AboutMeSection() {
       onMouseEnter={() => setShowInfo(true)}
       onMouseLeave={() => setShowInfo(false)}
     >
-      {/* Canvas global (desktop e mobile) */}
+      {/* Canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full touch-none" />
 
-      {/* ===== MOBILE LAYOUT ===== */}
-      {/* janela da animação (topo) com fade no fim */}
-      <div className="md:hidden relative w-full h-[60vh]">
-        {/* Fade no final da animação (mobile) */}
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-24
-                     bg-gradient-to-b from-transparent to-white"
-          aria-hidden="true"
-        />
-      </div>
-
-      {/* barra de regulagem compacta — abaixo da animação */}
+      {/* Fade no rodapé (mobile e desktop) */}
       <div
-        className="md:hidden relative z-10 mx-auto mt-3 w-[min(92%,720px)]
-                   rounded-2xl border border-gray-200 bg-white/80 backdrop-blur
-                   shadow-[0_6px_24px_rgba(0,0,0,0.08)] px-2 py-2
-                   flex items-center gap-2"
-      >
-        <input
-          type="range"
-          min={80}
-          max={520}
-          value={q}
-          onChange={(e) => setQ(parseInt(e.target.value))}
-          className="w-24 h-2 accent-gray-700"
-          aria-label="Resolução"
-          title="Resolução"
-        />
-        <input
-          type="range"
-          min={1}
-          max={5}
-          value={dot}
-          onChange={(e) => setDot(parseInt(e.target.value))}
-          className="w-24 h-2 accent-gray-700"
-          aria-label="Espessura"
-          title="Espessura"
-        />
-        <input
-          type="range"
-          min={0}
-          max={220}
-          value={thr}
-          onChange={(e) => setThr(parseInt(e.target.value))}
-          className="w-24 h-2 accent-gray-700"
-          aria-label="Contraste"
-          title="Contraste"
-        />
-        <button
-          onClick={replay}
-          className="h-8 px-3 rounded-lg text-[12px] font-semibold bg-gray-900 text-white hover:opacity-90 transition shrink-0"
-        >
-          Repetir
-        </button>
-      </div>
-
-      {/* card "sobre mim" — abaixo da animação, com leve sobreposição */}
-      <div
-        className="md:hidden relative z-10 w-[min(92%,720px)] mx-auto
-                   -mt-6 rounded-3xl border border-white/60 bg-white/90 backdrop-blur-xl
-                   shadow-[0_30px_120px_rgba(0,0,0,0.10)] p-5"
-      >
-        <h2 className="silver-kinetic text-2xl font-extrabold tracking-tight mb-3">
-          SOBRE MIM
-        </h2>
-        <p className="text-gray-700 leading-relaxed text-[15px]">
-          <strong>Muito prazer, eu sou a Marcela Queji!</strong><br />
-          Tenho 25 anos e desde 2020 aprendo e atuo nesse ramo. Comecei com marketing e design e, com o tempo,
-          aprofundei processos e tecnologia. Depois de dezenas de certificados e atendimentos, aprendi que a melhor entrega
-          é a que <em>funciona com eficiência</em> — planejada, sofisticada e resolutiva.
-        </p>
-        <p className="mt-3 text-gray-700 leading-relaxed text-[15px]">
-          Hoje, consigo oferecer soluções completas para a sua empresa.<br />
-          <strong>Você me diz o que precisa, o resto é comigo.</strong>
-        </p>
-      </div>
-
-      {/* ===== DESKTOP LAYOUT (preservado) ===== */}
-      {/* Fade global no rodapé (também atua no desktop) */}
-      <div
-        className="hidden md:block pointer-events-none absolute inset-x-0 bottom-0 h-28
-                   bg-gradient-to-b from-transparent to-white"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-white"
         aria-hidden="true"
       />
 
-      {/* Controles laterais — desktop */}
+      {/* ===== CONTROLES — DESKTOP (mantém como estava) ===== */}
       <div className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-2xl bg-white/90 text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] p-4 backdrop-blur flex-col gap-3 w-[220px]">
         <div className="font-semibold text-[12px]">Foto → Partículas 2D</div>
         <label className="text-[12px] opacity-80">Resolução</label>
@@ -277,7 +198,53 @@ export default function AboutMeSection() {
         </button>
       </div>
 
-      {/* Card “Sobre mim” — desktop, aparece no hover da seção */}
+      {/* ===== CONTROLES — MOBILE: barra mínima no topo ===== */}
+      <div
+        className="md:hidden absolute top-2 left-1/2 -translate-x-1/2 z-10 rounded-2xl border border-gray-200
+                   bg-white/75 backdrop-blur px-2 py-1 shadow-[0_6px_24px_rgba(0,0,0,0.08)]
+                   flex items-center gap-2"
+      >
+        {/* Sliders compactos lado a lado */}
+        <input
+          type="range"
+          min={80}
+          max={520}
+          value={q}
+          onChange={(e) => setQ(parseInt(e.target.value))}
+          className="w-20 h-2 accent-gray-700"
+          aria-label="Resolução"
+          title="Resolução"
+        />
+        <input
+          type="range"
+          min={1}
+          max={5}
+          value={dot}
+          onChange={(e) => setDot(parseInt(e.target.value))}
+          className="w-20 h-2 accent-gray-700"
+          aria-label="Espessura"
+          title="Espessura"
+        />
+        <input
+          type="range"
+          min={0}
+          max={220}
+          value={thr}
+          onChange={(e) => setThr(parseInt(e.target.value))}
+          className="w-20 h-2 accent-gray-700"
+          aria-label="Contraste"
+          title="Contraste"
+        />
+        <button
+          onClick={replay}
+          className="h-7 px-3 rounded-lg text-[11px] font-semibold bg-gray-900 text-white hover:opacity-90 transition"
+          aria-label="Repetir animação"
+        >
+          Repetir
+        </button>
+      </div>
+
+      {/* ===== CARD “SOBRE MIM” — desktop: aparece no hover da seção; mobile continua oculto ===== */}
       <div
         className={[
           "hidden md:block absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-10",
