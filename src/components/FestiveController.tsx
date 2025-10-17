@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+/* ============================= UTIL ============================= */
 function useDocHeight() {
   const [h, setH] = useState<number>(
     typeof window !== "undefined" ? document.documentElement.scrollHeight : 0
@@ -21,9 +22,10 @@ function useDocHeight() {
   return h || 0;
 }
 
+/* ============================= ROOT ============================= */
 export default function FestiveController() {
   const [mode, setMode] = useState<"normal" | "natal">("normal");
-  const [transitioning, setTransitioning] = useState(false);
+  const [transitioning] = useState(false); // mantido, mas não utilizado ativamente
   const [showNatalIntro, setShowNatalIntro] = useState(false);
 
   const bellRef = useRef<HTMLAudioElement | null>(null);
@@ -66,7 +68,7 @@ export default function FestiveController() {
         </button>
       </div>
 
-      {/* transição branca suave (mantido, mesmo sem uso de setTransitioning) */}
+      {/* transição branca suave */}
       <AnimatePresence>
         {transitioning && (
           <motion.div
@@ -126,21 +128,28 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
       transition={{ duration: 0.35 }}
     >
       <svg viewBox="0 0 600 600" className="w-[92vw] max-w-[640px]">
-        <radialGradient id="goldGlow" cx="50%" cy="40%">
-          <stop offset="0%" stopColor="#FFDFA3" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#0b0f1a" stopOpacity="0" />
-        </radialGradient>
+        <defs>
+          <radialGradient id="goldGlow" cx="50%" cy="40%">
+            <stop offset="0%" stopColor="#FFDFA3" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#0b0f1a" stopOpacity="0" />
+          </radialGradient>
+          {/* Path com id para animar um ponto seguindo o contorno */}
+          <path id="treeContour" d={treePath} fill="none" />
+        </defs>
+
         <rect width="600" height="600" fill="url(#goldGlow)" />
 
+        {/* estrela */}
         <motion.polygon
           points="300,85 310,105 332,108 316,122 320,143 300,133 280,143 284,122 268,108 290,105"
           fill="#F4D03F"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: [0, 1.15, 1], opacity: 1 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-          filter="drop-shadow(0 0 10px rgba(244,208,63,.75))"
+          style={{ filter: "drop-shadow(0 0 10px rgba(244,208,63,.75))" }}
         />
 
+        {/* contorno da árvore */}
         <motion.path
           d={treePath}
           fill="none"
@@ -151,18 +160,20 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ duration: 2.2, ease: "easeInOut", delay: 0.2 }}
-          filter="drop-shadow(0 0 10px rgba(227,184,115,.55))"
+          style={{ filter: "drop-shadow(0 0 10px rgba(227,184,115,.55))" }}
         />
 
+        {/* tronco */}
         <motion.path
           d={trunkPath}
           fill="#E3B873"
           initial={{ scaleY: 0, opacity: 0, transformOrigin: "50% 100%" }}
           animate={{ scaleY: 1, opacity: 1 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 2.5 }}
-          filter="drop-shadow(0 0 8px rgba(227,184,115,.45))"
+          style={{ filter: "drop-shadow(0 0 8px rgba(227,184,115,.45))" }}
         />
 
+        {/* base */}
         <motion.path
           d="M180 500 Q300 540 420 500"
           fill="none"
@@ -172,33 +183,56 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ duration: 0.8, ease: "easeInOut", delay: 2.6 }}
-          filter="drop-shadow(0 0 8px rgba(227,184,115,.45))"
+          style={{ filter: "drop-shadow(0 0 8px rgba(227,184,115,.45))" }}
         />
 
-        <motion.div
-          style={{ offsetPath: `path("${treePath}")`, offsetRotate: "0deg" }}
-          initial={{ offsetDistance: "0%" }}
-          animate={{ offsetDistance: ["0%", "100%"] }}
-          transition={{ duration: 2.2, ease: "easeInOut", delay: 0.2 }}
-        >
-          <div
-            className="w-3 h-3 rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle, #7EE1FF 0%, #3AB6FF 50%, rgba(58,182,255,0) 70%)",
-              filter: "drop-shadow(0 0 10px rgba(126,225,255,.75))",
-            }}
-          />
-        </motion.div>
+        {/* luz “percorrendo” o contorno usando SVG animateMotion (compatível e sem HTML dentro do SVG) */}
+        <g>
+          <circle
+            r="4"
+            fill="#7EE1FF"
+            style={{ filter: "drop-shadow(0 0 10px rgba(126,225,255,.75))" }}
+          >
+            <animate
+              attributeName="opacity"
+              values="0;1;1;0.6;1"
+              dur="2.2s"
+              begin="0.2s"
+              fill="freeze"
+            />
+            <animateMotion dur="2.2s" begin="0.2s" fill="freeze">
+              <mpath href="#treeContour" />
+            </animateMotion>
+          </circle>
+        </g>
 
-        {[{x:270,y:150},{x:330,y:150},{x:250,y:200},{x:350,y:200},{x:230,y:250},{x:370,y:250},{x:210,y:300},{x:390,y:300},{x:190,y:350},{x:410,y:350}].map((p,i)=>(
+        {/* bolinhas piscando */}
+        {[
+          { x: 270, y: 150 },
+          { x: 330, y: 150 },
+          { x: 250, y: 200 },
+          { x: 350, y: 200 },
+          { x: 230, y: 250 },
+          { x: 370, y: 250 },
+          { x: 210, y: 300 },
+          { x: 390, y: 300 },
+          { x: 190, y: 350 },
+          { x: 410, y: 350 },
+        ].map((p, i) => (
           <motion.circle
             key={i}
-            cx={p.x} cy={p.y} r="5"
-            fill={["#F4D03F","#C0392B","#1E5631"][i%3]}
+            cx={p.x}
+            cy={p.y}
+            r="5"
+            fill={["#F4D03F", "#C0392B", "#1E5631"][i % 3]}
             initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: [0,1,0.6,1], scale: [0.5,1.2,1] }}
-            transition={{ delay: 2.1 + i*0.06, duration: 0.9, repeat: Infinity, repeatDelay: 2 }}
+            animate={{ opacity: [0, 1, 0.6, 1], scale: [0.5, 1.2, 1] }}
+            transition={{
+              delay: 2.1 + i * 0.06,
+              duration: 0.9,
+              repeat: Infinity,
+              repeatDelay: 2,
+            }}
           />
         ))}
       </svg>
@@ -236,7 +270,10 @@ function SnowFall({ docHeight }: { docHeight: number }) {
   const vw = typeof window !== "undefined" ? window.innerWidth : 1200;
 
   return (
-    <div className="absolute left-0 top-0 w-full" style={{ height: docHeight || "100vh" }}>
+    <div
+      className="absolute left-0 top-0 w-full"
+      style={{ height: docHeight || "100vh" }}
+    >
       {flakes.map((_, i) => (
         <motion.div
           key={i}
@@ -308,38 +345,54 @@ function GuirlandaTop() {
           className="w-3 h-3 rounded-full"
           style={{ backgroundColor: ["#F4D03F", "#C0392B", "#1E5631"][i % 3] }}
           animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.25, 1] }}
-          transition={{ duration: 1 + Math.random(), repeat: Infinity, ease: "easeInOut" }}
+          transition={{
+            duration: 1 + Math.random(),
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         />
       ))}
     </div>
   );
 }
 
-function GarlandEdge({ side="top" }: { side?: "top"|"bottom" }) {
+function GarlandEdge({ side = "top" }: { side?: "top" | "bottom" }) {
   const dots = Array.from({ length: 18 });
   return (
-    <div className={`pointer-events-none fixed ${side==='top'?'top-0':'bottom-0'} left-0 right-0 z-[998] flex justify-center gap-4 py-2`}>
+    <div
+      className={`pointer-events-none fixed ${
+        side === "top" ? "top-0" : "bottom-0"
+      } left-0 right-0 z-[998] flex justify-center gap-4 py-2`}
+    >
       {dots.map((_, i) => (
         <motion.div
           key={i}
           className="w-2.5 h-2.5 rounded-full"
-          style={{ backgroundColor: ["#F4D03F","#C0392B","#1E5631"][i%3] }}
-          animate={{ opacity: [0.3,1,0.3], scale:[1,1.25,1] }}
-          transition={{ duration: 1 + (i%5)*0.15, repeat: Infinity, ease: "easeInOut" }}
+          style={{ backgroundColor: ["#F4D03F", "#C0392B", "#1E5631"][i % 3] }}
+          animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.25, 1] }}
+          transition={{
+            duration: 1 + (i % 5) * 0.15,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         />
       ))}
     </div>
   );
 }
 
-import { motion } from "framer-motion";
-
+/* ============================= 🎅 TRENÓ ============================= */
 function SantaSled() {
   return (
     <motion.div
       className="fixed z-[997] left-[-15vw] top-[12vh] select-none pointer-events-none"
       animate={{ x: ["-15vw", "120vw"], y: ["0vh", "-2vh", "0vh"] }}
-      transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", repeatDelay: 6 }}
+      transition={{
+        duration: 9,
+        repeat: Infinity,
+        ease: "easeInOut",
+        repeatDelay: 6,
+      }}
       style={{ filter: "drop-shadow(0 6px 12px rgba(0,0,0,.35))" }}
     >
       <img
@@ -352,7 +405,3 @@ function SantaSled() {
     </motion.div>
   );
 }
-
-export default SantaSled;
-
-
