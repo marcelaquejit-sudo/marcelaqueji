@@ -66,7 +66,7 @@ export default function FestiveController() {
         </button>
       </div>
 
-      {/* transição branca suave */}
+      {/* transição branca suave (mantido, mesmo sem uso de setTransitioning) */}
       <AnimatePresence>
         {transitioning && (
           <motion.div
@@ -101,14 +101,11 @@ export default function FestiveController() {
 
 /* ============================= 🎄 INTRO DE NATAL ============================= */
 function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
-  // ~3.6s total
   useEffect(() => {
     const t = setTimeout(onDone, 3600);
     return () => clearTimeout(t);
   }, [onDone]);
 
-  // Caminho do pinheiro (galhos em zig-zag crescendo + chão)
-  // Desenho único para animar com pathLength
   const treePath = `
     M300 110
     L270 150 L330 150
@@ -117,9 +114,8 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
     L210 300 L390 300
     L190 350 L410 350
     L175 390 L425 390
-  `; // pinheiro estilizado
-
-  const trunkPath = `M285 410 L285 470 L315 470 L315 410 Z`; // tronco
+  `;
+  const trunkPath = `M285 410 L285 470 L315 470 L315 410 Z`;
 
   return (
     <motion.div
@@ -130,14 +126,12 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
       transition={{ duration: 0.35 }}
     >
       <svg viewBox="0 0 600 600" className="w-[92vw] max-w-[640px]">
-        {/* brilho sutil */}
         <radialGradient id="goldGlow" cx="50%" cy="40%">
           <stop offset="0%" stopColor="#FFDFA3" stopOpacity="0.35" />
           <stop offset="100%" stopColor="#0b0f1a" stopOpacity="0" />
         </radialGradient>
         <rect width="600" height="600" fill="url(#goldGlow)" />
 
-        {/* estrela */}
         <motion.polygon
           points="300,85 310,105 332,108 316,122 320,143 300,133 280,143 284,122 268,108 290,105"
           fill="#F4D03F"
@@ -147,7 +141,6 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
           filter="drop-shadow(0 0 10px rgba(244,208,63,.75))"
         />
 
-        {/* pinheiro (galhos) */}
         <motion.path
           d={treePath}
           fill="none"
@@ -161,7 +154,6 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
           filter="drop-shadow(0 0 10px rgba(227,184,115,.55))"
         />
 
-        {/* tronco */}
         <motion.path
           d={trunkPath}
           fill="#E3B873"
@@ -171,7 +163,6 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
           filter="drop-shadow(0 0 8px rgba(227,184,115,.45))"
         />
 
-        {/* chão curvo */}
         <motion.path
           d="M180 500 Q300 540 420 500"
           fill="none"
@@ -184,7 +175,6 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
           filter="drop-shadow(0 0 8px rgba(227,184,115,.45))"
         />
 
-        {/* faísca percorrendo os galhos */}
         <motion.div
           style={{ offsetPath: `path("${treePath}")`, offsetRotate: "0deg" }}
           initial={{ offsetDistance: "0%" }}
@@ -201,7 +191,6 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
           />
         </motion.div>
 
-        {/* luzinhas que acendem depois do traço */}
         {[{x:270,y:150},{x:330,y:150},{x:250,y:200},{x:350,y:200},{x:230,y:250},{x:370,y:250},{x:210,y:300},{x:390,y:300},{x:190,y:350},{x:410,y:350}].map((p,i)=>(
           <motion.circle
             key={i}
@@ -221,20 +210,23 @@ function ChristmasIntroOverlay({ onDone }: { onDone: () => void }) {
 function NatalOverlay() {
   const h = useDocHeight();
   return (
-    <motion.div
-      className="absolute left-0 top-0 w-full pointer-events-none overflow-visible z-[999]"
-      style={{ height: h || "100vh" }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.8 }}
-    >
-      <SnowFall docHeight={h} />
-      <IceOverlay docHeight={h} />
-      <GuirlandaTop />
-    </motion.div>
-    <SantaSled />
+    <>
+      <motion.div
+        className="absolute left-0 top-0 w-full pointer-events-none overflow-visible z-[999]"
+        style={{ height: h || "100vh" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <SnowFall docHeight={h} />
+        <IceOverlay docHeight={h} />
+        <GuirlandaTop />
+      </motion.div>
 
+      {/* trenó separado do overlay, mas no mesmo nível */}
+      <SantaSled />
+    </>
   );
 }
 
@@ -297,7 +289,7 @@ function IceOverlay({ docHeight }: { docHeight: number }) {
           position: "absolute",
           inset: 0,
           background:
-          "radial-gradient(circle at 50% 20%, rgba(255,255,255,.15), rgba(255,255,255,0) 60%)",
+            "radial-gradient(circle at 50% 20%, rgba(255,255,255,.15), rgba(255,255,255,0) 60%)",
           filter: "blur(4px) brightness(1.1)",
           mixBlendMode: "lighten",
         }}
@@ -322,6 +314,7 @@ function GuirlandaTop() {
     </div>
   );
 }
+
 function GarlandEdge({ side="top" }: { side?: "top"|"bottom" }) {
   const dots = Array.from({ length: 18 });
   return (
@@ -338,6 +331,7 @@ function GarlandEdge({ side="top" }: { side?: "top"|"bottom" }) {
     </div>
   );
 }
+
 function SantaSled() {
   return (
     <motion.div
@@ -350,3 +344,4 @@ function SantaSled() {
     </motion.div>
   );
 }
+
