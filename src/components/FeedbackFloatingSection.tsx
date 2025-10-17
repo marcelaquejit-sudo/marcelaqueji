@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import Sparkles from "./Sparkles";
 
 export default function FeedbackFloatingSection() {
   const feedbacks = [
@@ -57,13 +58,16 @@ export default function FeedbackFloatingSection() {
                 transition: { duration: 0.6, ease: "easeOut", delay },
               }}
               viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
-              className="absolute w-[260px] sm:w-[320px] cursor-grab active:cursor-grabbing rounded-3xl border border-[#c9c9c9]/60 backdrop-blur-2xl bg-white/70 p-4 transition-transform duration-300 ease-out hover:scale-[1.03]"
+              className="absolute relative w-[260px] sm:w-[320px] cursor-grab active:cursor-grabbing rounded-3xl border border-[#c9c9c9]/60 backdrop-blur-2xl bg-white/70 p-4 transition-transform duration-300 ease-out hover:scale-[1.03]"
               style={{ top: `min(${spot.top}, 88%)`, left: spot.left }}
               animate={{
                 y: [0, -10, 0],
                 transition: { duration, repeat: Infinity, ease: "easeInOut" },
               }}
             >
+              {/* brilhos em alguns cards (ex.: a cada 3) */}
+              {i % 3 === 0 && <Sparkles count={6} color="#F4F1D0" />}
+
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-gray-700 text-sm sm:text-base truncate pr-2">
                   {f.author}
@@ -92,8 +96,11 @@ export default function FeedbackFloatingSection() {
               transition: { duration: 0.5, ease: "easeOut", delay: i * 0.1 },
             }}
             viewport={{ once: false, amount: 0.4 }}
-            className="rounded-3xl border border-[#c9c9c9]/60 backdrop-blur-2xl bg-white/70 p-4"
+            className="relative rounded-3xl border border-[#c9c9c9]/60 backdrop-blur-2xl bg-white/70 p-4"
           >
+            {/* brilhos em alguns cards no mobile (ex.: a cada 4) */}
+            {i % 4 === 1 && <Sparkles count={5} color="#FFFFFF" />}
+
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-gray-700 text-sm truncate pr-2">
                 {f.author}
