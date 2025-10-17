@@ -388,7 +388,7 @@ function SantaSled() {
       className="fixed z-[997] left-[-15vw] top-[12vh] select-none pointer-events-none"
       animate={{ x: ["-15vw", "120vw"], y: ["0vh", "-2vh", "0vh"] }}
       transition={{
-        duration: 9,
+        duration: 18,
         repeat: Infinity,
         ease: "easeInOut",
         repeatDelay: 6,
