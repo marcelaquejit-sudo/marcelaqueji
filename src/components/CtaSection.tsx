@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function CtaSection() {
-  const phone = "920015594"; // seu número
+  const phone = "42920015594"; // seu número
   const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(
     "Oi, vi seu site e quero falar sobre um projeto."
   )}`;
