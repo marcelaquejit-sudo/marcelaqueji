@@ -1,10 +1,18 @@
 import React from "react";
 
 export default function CtaSection() {
-  const phone = "5542920015594"; // seu número
-  const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(
-    "Oi, vi seu site e quero falar sobre um projeto."
-  )}`;
+  // use sempre o número no formato: DDI + DDD + número, só dígitos
+  const rawPhone = "5542920015594";
+  const phone = rawPhone.replace(/\D/g, "");
+
+  const message = "Oi, vi seu site e quero falar sobre um projeto.";
+  const text = encodeURIComponent(message);
+
+  // Link principal (funciona bem no mobile e desktop)
+  const waLink = `https://wa.me/${phone}?text=${text}`;
+
+  // (Opcional) fallback clássico:
+  // const waLink = `https://api.whatsapp.com/send?phone=${phone}&text=${text}`;
 
   return (
     <section id="cta" className="relative w-full py-24 px-6 bg-white scroll-mt-24">
@@ -42,4 +50,3 @@ export default function CtaSection() {
     </section>
   );
 }
-
