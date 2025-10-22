@@ -22,7 +22,7 @@ export default function CtaSection() {
 
       <div className="relative max-w-5xl mx-auto text-center">
         <h2 className="silver-kinetic text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
-          Se concentre no que é bom, delegue todo o resto.
+          SE CONCENTRE NO QUE É BOM, DELEGUE TODO O RESTO.
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Transforme ideias em resultados com eficiência.
@@ -36,14 +36,14 @@ export default function CtaSection() {
             aria-label="Abrir conversa no WhatsApp"
             className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-5 py-2 font-semibold text-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:bg-white"
           >
-            Vamos conversar
+            VAMOS CONVERSAR
           </a>
 
           <a
             href="#cases"
             className="inline-flex items-center rounded-full border border-gray-200 px-5 py-2 font-semibold text-gray-600 hover:text-gray-800"
           >
-            Ver cases
+            VER CASES
           </a>
         </div>
       </div>
