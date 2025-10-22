@@ -380,28 +380,3 @@ function GarlandEdge({ side = "top" }: { side?: "top" | "bottom" }) {
     </div>
   );
 }
-
-/* ============================= 🎅 TRENÓ ============================= */
-function SantaSled() {
-  return (
-    <motion.div
-      className="fixed z-[997] left-[-15vw] top-[12vh] select-none pointer-events-none"
-      animate={{ x: ["-15vw", "120vw"], y: ["0vh", "-2vh", "0vh"] }}
-      transition={{
-        duration: 18,
-        repeat: Infinity,
-        ease: "easeInOut",
-        repeatDelay: 6,
-      }}
-      style={{ filter: "drop-shadow(0 6px 12px rgba(0,0,0,.35))" }}
-    >
-      <img
-        src="https://imgur.com/lyGS6og"
-        alt="Sled do Papai Noel"
-        className="w-[90px] md:w-[120px] h-auto"
-        loading="eager"
-        decoding="async"
-      />
-    </motion.div>
-  );
-}
