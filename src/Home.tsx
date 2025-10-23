@@ -1,4 +1,3 @@
-// src/Home.tsx
 import React from "react";
 import AnalyticsBoot from "./components/AnalyticsBoot";
 import SiteHeader from "./components/SiteHeader";
@@ -29,3 +28,4 @@ export default function Home() {
     </main>
   );
 }
+
