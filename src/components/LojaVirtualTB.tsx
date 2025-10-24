@@ -30,6 +30,12 @@ const GlobalStyles = () => (
     .bg-float { animation: floatYSlow 26s ease-in-out infinite; }
     .column-up { animation: columnDriftUp 52s linear infinite; }
     .column-down { animation: columnDriftDown 52s linear infinite; }
+    
+    /* NOVO: marquee horizontal p/ indicadores */
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
   `}</style>
 );
 
@@ -177,6 +183,69 @@ function VerticalShowcase() {
     </div>
   );
 }
+function IndicatorsCarousel() {
+  const base = [
+    "ENTREGA EM ATÉ 7 DIAS",
+    "SUPORTE LOCAL",
+    "ATÉ 500 PRODUTOS",
+    "MARKETING MENSAL INCLUSO",
+    "PAINEL SIMPLES E INTUITIVO",
+  ];
+
+  const categorias = [
+    "LOJA DE SAPATOS",
+    "LOJA DE ROUPAS",
+    "LOJA DE MÓVEIS",
+    "LOJA DE CARROS",
+    "ELETRÔNICOS",
+    "FARMÁCIA",
+    "COSMÉTICOS",
+    "PET SHOP",
+    "PAPELARIA",
+    "MERCADO",
+    "RESTAURANTE",
+    "FLORICULTURA",
+  ];
+
+  const items = [...base, ...categorias];
+  const loop = [...items, ...items]; // duplica p/ loop perfeito
+
+  return (
+    <div className="relative py-8">
+      {/* fades laterais */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-24 bg-gradient-to-r from-white to-transparent z-10" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-24 bg-gradient-to-l from-white to-transparent z-10" />
+
+      <div className="overflow-hidden">
+        <ul
+          className="
+            flex gap-3 sm:gap-4 whitespace-nowrap
+            [animation:marquee_28s_linear_infinite]
+            hover:[animation-play-state:paused]
+            will-change-transform
+          "
+          style={{ animationDuration: "26s" }}
+        >
+          {loop.map((txt, i) => (
+            <li key={i} className="inline-flex">
+              <div
+                className="
+                  px-5 sm:px-6 py-3 rounded-2xl
+                  bg-white/40 backdrop-blur-2xl
+                  border border-[#2F6FED]/20 shadow-md
+                  text-[#0A0A0A] text-sm sm:text-[15px] font-semibold tracking-wide
+                  whitespace-nowrap
+                "
+              >
+                {txt}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 export default function LandingPagePlanoTrimestral() {
   const waLink = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(
@@ -248,21 +317,12 @@ export default function LandingPagePlanoTrimestral() {
       </section>
 
       {/* Indicadores */}
-      <section id="indicadores" className="py-14">
-        <Container>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-            {[
-              "ENTREGA EM ATÉ 7 DIAS",
-              "SUPORTE LOCAL",
-              "ATÉ 500 PRODUTOS",
-              "MARKETING MENSAL INCLUSO",
-              "PAINEL SIMPLES E INTUITIVO",
-            ].map((txt, i) => (
-              <Chip key={i}>{txt}</Chip>
-            ))}
-          </div>
-        </Container>
-      </section>
+<section id="indicadores" className="py-12">
+  <Container>
+    <IndicatorsCarousel />
+  </Container>
+</section>
+
 
       {/* Problema x Solução */}
       <section id="problema-solucao" className="py-20">
