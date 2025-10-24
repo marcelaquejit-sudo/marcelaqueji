@@ -1,14 +1,28 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
+
+  // Detecta se estamos na rota da loja para estilizar como "ativo"
+  const isLojaVirtual = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.location.hash.startsWith("#/loja-virtual-tb");
+  }, [typeof window !== "undefined" ? window.location.hash : ""]);
+
+  const baseLink =
+    "hover:text-gray-900 transition-colors";
+
+  const lojaClasses = isLojaVirtual
+    ? "inline-flex items-center rounded-full bg-[#2F6FED] text-white px-4 py-1.5 font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+    : "inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-4 py-1.5 font-semibold text-gray-800 shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-white";
+
   return (
     <header className="fixed top-0 inset-x-0 z-40">
       <div className="mx-auto max-w-6xl px-4">
         <div className="mt-3 rounded-2xl bg-white/80 backdrop-blur border border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.08)] px-4 py-2">
           <div className="flex items-center justify-between">
-            {/* Logo como imagem */}
-            <a href="#hero" className="block" aria-label="Ir para o início">
+            {/* Logo */}
+            <a href="#/" className="block" aria-label="Ir para o início">
               <img
                 src="https://i.imgur.com/2SShxU3.png"
                 alt="Marcela Queji"
@@ -19,13 +33,27 @@ export default function SiteHeader() {
               />
             </a>
 
-            {/* Desktop menu (mantém "Sobre") */}
+            {/* Desktop menu */}
             <nav className="hidden md:flex items-center gap-6 text-sm text-gray-700">
-              <a href="#servicos" className="hover:text-gray-900">Serviços</a>
-              <a href="#cases" className="hover:text-gray-900">Cases</a>
-              <a href="#feedbacks" className="hover:text-gray-900">Feedbacks</a>
-              <a href="#sobre" className="hover:text-gray-900">Sobre</a>
-              <a href="#cta" className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-4 py-1.5 font-semibold text-gray-800 shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-white">Contato</a>
+              <a href="#/servicos" className={baseLink}>Serviços</a>
+              <a href="#/cases" className={baseLink}>Cases</a>
+              <a href="#/feedbacks" className={baseLink}>Feedbacks</a>
+
+              {/* Loja Virtual TB (rota) */}
+              <a
+                href="#/loja-virtual-tb"
+                className={lojaClasses}
+                aria-current={isLojaVirtual ? "page" : undefined}
+              >
+                Loja Virtual TB
+              </a>
+
+              <a
+                href="#/cta"
+                className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-4 py-1.5 font-semibold text-gray-800 shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-white"
+              >
+                Contato
+              </a>
             </nav>
 
             {/* Botão mobile */}
@@ -39,14 +67,26 @@ export default function SiteHeader() {
             </button>
           </div>
 
-          {/* Mobile menu (SEM "Sobre") */}
+          {/* Mobile menu */}
           {open && (
             <div className="md:hidden mt-2 grid gap-2 text-sm text-gray-700">
-              <a onClick={() => setOpen(false)} href="#servicos" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Serviços</a>
-              <a onClick={() => setOpen(false)} href="#cases" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Cases</a>
-              <a onClick={() => setOpen(false)} href="#feedbacks" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Feedbacks</a>
-              <a onClick={() => setOpen(false)} href="#loja-virtual-tb" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Loja Virtual</a>
-              <a onClick={() => setOpen(false)} href="#cta" className="block rounded-lg px-3 py-2 bg-white/80 backdrop-blur border border-white/60 font-semibold text-gray-800">Contato</a>
+              <a onClick={() => setOpen(false)} href="#/servicos" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Serviços</a>
+              <a onClick={() => setOpen(false)} href="#/cases" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Cases</a>
+              <a onClick={() => setOpen(false)} href="#/feedbacks" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Feedbacks</a>
+
+              {/* Loja Virtual TB no mobile */}
+              <a
+                onClick={() => setOpen(false)}
+                href="#/loja-virtual-tb"
+                className={`block rounded-lg px-3 py-2 hover:bg-gray-50 ${isLojaVirtual ? "text-[#2F6FED] font-semibold" : ""}`}
+                aria-current={isLojaVirtual ? "page" : undefined}
+              >
+                Loja Virtual TB
+              </a>
+
+              <a onClick={() => setOpen(false)} href="#/cta" className="block rounded-lg px-3 py-2 bg-white/80 backdrop-blur border border-white/60 font-semibold text-gray-800">
+                Contato
+              </a>
             </div>
           )}
         </div>
@@ -54,3 +94,4 @@ export default function SiteHeader() {
     </header>
   );
 }
+
