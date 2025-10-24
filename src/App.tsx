@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
-import LojaVirtualTB from "./pages/LojaVirtualTB"; // crie esse arquivo e cole a LP inteira
+import LojaVirtualTB from "./components/LojaVirtualTB";// crie esse arquivo e cole a LP inteira
 
 export default function App() {
   return (
