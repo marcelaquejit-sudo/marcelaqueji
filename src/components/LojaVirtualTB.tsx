@@ -36,8 +36,29 @@ const GlobalStyles = () => (
       0%   { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
+    {/* Background mobile simples (uma imagem) */}
+<div className="md:hidden fixed inset-0 -z-10 opacity-[0.06]">
+  <img
+    src={BG_IMAGES[0]}
+    alt="bg"
+    className="w-full h-full object-cover"
+    loading="lazy"
+    decoding="async"
+  />
+</div>
+
   `}</style>
 );
+
+// Smooth scroll com compensação do header fixo
+function scrollToId(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const headerOffset = 80; // ~altura do header
+  const y = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+  window.scrollTo({ top: y, behavior: "smooth" });
+}
+
 
 function Container({ children, className = "" }) {
   return (
@@ -91,29 +112,33 @@ function GlassCard({ children, className = "" }) {
   );
 }
 
-function CTAButton({ href, children, variant = "primary" }) {
+function CTAButton({ href, children, variant = "primary", onClick }: { href?: string; children: React.ReactNode; variant?: "primary" | "outline" | "whatsapp"; onClick?: (e: React.MouseEvent) => void; }) {
   const base =
     "inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-extrabold transition-all duration-200 active:scale-[0.98] shadow-lg hover:shadow-xl";
+
+  const props = { href, onClick } as any;
+
   if (variant === "outline") {
     return (
-      <a href={href} className={`${base} border border-[#2F6FED]/40 text-[#2F6FED] bg-white/60 backdrop-blur hover:-translate-y-0.5`}>
+      <a {...props} className={`${base} border border-[#2F6FED]/40 text-[#2F6FED] bg-white/60 backdrop-blur hover:-translate-y-0.5`}>
         {children}
       </a>
     );
   }
   if (variant === "whatsapp") {
     return (
-      <a href={href} target="_blank" rel="noreferrer" className={`${base} text-white bg-gradient-to-r from-[#2F6FED] to-emerald-500 hover:-translate-y-0.5`}>
+      <a {...props} target="_blank" rel="noreferrer" className={`${base} text-white bg-gradient-to-r from-[#2F6FED] to-emerald-500 hover:-translate-y-0.5`}>
         {children}
       </a>
     );
   }
   return (
-    <a href={href} className={`${base} text-white bg-[#2F6FED] hover:-translate-y-0.5`}>
+    <a {...props} className={`${base} text-white bg-[#2F6FED] hover:-translate-y-0.5`}>
       {children}
     </a>
   );
 }
+
 
 function AccordionItem({ q, a }) {
   const [open, setOpen] = useState(false);
@@ -299,8 +324,21 @@ export default function LandingPagePlanoTrimestral() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mt-8 flex flex-wrap items-center gap-3"
             >
-              <CTAButton href="#plano">VER PLANO</CTAButton>
-              <CTAButton href="#exemplos" variant="outline">VER EXEMPLOS</CTAButton>
+              <CTAButton
+  href="#plano"
+  onClick={(e) => { e.preventDefault(); scrollToId("plano"); }}
+>
+  VER PLANO
+</CTAButton>
+
+<CTAButton
+  href="#exemplos"
+  variant="outline"
+  onClick={(e) => { e.preventDefault(); scrollToId("exemplos"); }}
+>
+  VER EXEMPLOS
+</CTAButton>
+
             </motion.div>
 
             <motion.div
@@ -316,8 +354,8 @@ export default function LandingPagePlanoTrimestral() {
         </Container>
       </section>
 
-      {/* Indicadores */}
-<section id="indicadores" className="py-12">
+     {/* Indicadores (não mostra no mobile) */}
+<section id="indicadores" className="py-12 hidden md:block">
   <Container>
     <IndicatorsCarousel />
   </Container>
