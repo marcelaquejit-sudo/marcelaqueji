@@ -2,42 +2,51 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]   # troque se sua branch padrão for outra
+  workflow_dispatch:        # botão "Run workflow" manual
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# não cancela builds antigos; evita "The operation was canceled"
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "20"
+          cache: "npm"
 
-      # <- Troquei npm ci por npm install
-      - name: Install dependencies
-        run: npm install
+      # força reinstalação limpa (pega react-router-dom mesmo sem lock antigo)
+      - name: Clean and reinstall deps
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install --no-audit --no-fund
 
-      - name: Build project
+      - name: Build
         run: npm run build
 
+      # mantém seu domínio e desativa jekyll
       - name: Add CNAME and .nojekyll
         run: |
           echo "www.marcelaqueji.com.br" > dist/CNAME
           touch dist/.nojekyll
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: ./dist
 
   deploy:
     needs: build
@@ -46,5 +55,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
