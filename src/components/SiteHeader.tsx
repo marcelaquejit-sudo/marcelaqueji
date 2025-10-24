@@ -45,6 +45,7 @@ export default function SiteHeader() {
               <a onClick={() => setOpen(false)} href="#servicos" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Serviços</a>
               <a onClick={() => setOpen(false)} href="#cases" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Cases</a>
               <a onClick={() => setOpen(false)} href="#feedbacks" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Feedbacks</a>
+              <a onClick={() => setOpen(false)} href="#loja-virtual-tb" className="block rounded-lg px-3 py-2 hover:bg-gray-50">Loja Virtual</a>
               <a onClick={() => setOpen(false)} href="#cta" className="block rounded-lg px-3 py-2 bg-white/80 backdrop-blur border border-white/60 font-semibold text-gray-800">Contato</a>
             </div>
           )}
