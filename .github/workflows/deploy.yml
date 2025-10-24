@@ -2,15 +2,15 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]   # troque se sua branch padrão for outra
-  workflow_dispatch:        # botão "Run workflow" manual
+    branches: [ "main" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# não cancela builds antigos; evita "The operation was canceled"
+# evita que um run cancele o outro
 concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: false
@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"      # sem cache, pois não há package-lock.json
+          node-version: "20"      # sem cache por enquanto (você não tem package-lock)
 
       - name: Install deps
         run: npm install --no-audit --no-fund
@@ -33,30 +33,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Add CNAME and .nojekyll
-        run: |
-          echo "www.marcelaqueji.com.br" > dist/CNAME
-          touch dist/.nojekyll
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-      - name: Build
-        run: npm run build
-
-      # mantém seu domínio e desativa jekyll
       - name: Add CNAME and .nojekyll
         run: |
           echo "www.marcelaqueji.com.br" > dist/CNAME
