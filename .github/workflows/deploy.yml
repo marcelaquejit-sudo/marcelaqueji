@@ -25,15 +25,34 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: "20"      # sem cache, pois não há package-lock.json
 
-      # força reinstalação limpa (pega react-router-dom mesmo sem lock antigo)
-      - name: Clean and reinstall deps
+      - name: Install deps
+        run: npm install --no-audit --no-fund
+
+      - name: Build
+        run: npm run build
+
+      - name: Add CNAME and .nojekyll
         run: |
-          rm -rf node_modules package-lock.json
-          npm install --no-audit --no-fund
+          echo "www.marcelaqueji.com.br" > dist/CNAME
+          touch dist/.nojekyll
 
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
       - name: Build
         run: npm run build
 
