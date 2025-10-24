@@ -10,6 +10,21 @@ const BG_IMAGES = [
 ];
 
 const WHATSAPP_PHONE = "5542920015594";
+// animação suave p/ itens ao surgir no scroll
+const liAnim = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+};
+
+// bullet estilizado
+function Bullet({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="mt-[6px] h-2.5 w-2.5 rounded-full bg-[#2F6FED]/80 shadow-[0_0_0_3px_rgba(47,111,237,0.12)]" />
+      <div className="text-sm text-neutral-800">{children}</div>
+    </div>
+  );
+}
 
 // Keyframes CSS inlined via style tag (ajustados)
 const GlobalStyles = () => (
@@ -470,6 +485,97 @@ export default function LandingPagePlanoTrimestral() {
           <VerticalShowcase />
         </div>
       </section>
+      {/* FUNCIONALIDADES – COMPRADOR */}
+<section id="funcionalidades-cliente" className="py-24">
+  <Container>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+      <SectionTitle
+        kicker="FUNCIONALIDADES DA LOJA VIRTUAL"
+        title="O que o cliente pode fazer"
+        description="Tudo que o visitante tem acesso e pode realizar ao navegar na loja."
+      />
+      <GlassCard className="lg:col-span-2 p-6 md:p-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {[
+            "Visualizar produtos com fotos, descrições e preços.",
+            "Filtrar e pesquisar por categorias, marcas e faixas de preço.",
+            "Adicionar ao carrinho e calcular frete antes da compra.",
+            "Escolher pagamento: Pix, cartão, boleto ou parcelamento.",
+            "Criar conta ou comprar como visitante.",
+            "Salvar produtos como favoritos (lista de desejos).",
+            "Receber confirmação automática do pedido por e-mail.",
+            "Acompanhar status do pedido (em preparo, enviado, entregue).",
+            "Pagar com segurança (Mercado Pago, PagSeguro etc.).",
+            "Receber notificações automáticas sobre envio/entrega.",
+            "Compartilhar produtos via WhatsApp e redes sociais.",
+            "Navegar em qualquer dispositivo (layout responsivo).",
+            "Avaliar produtos e deixar comentários (opcional).",
+            "Entrar em contato direto pelo WhatsApp.",
+          ].map((t, i) => (
+            <motion.div
+              key={i}
+              variants={liAnim}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+            >
+              <Bullet>{t}</Bullet>
+            </motion.div>
+          ))}
+        </div>
+      </GlassCard>
+    </div>
+  </Container>
+</section>
+
+{/* FUNCIONALIDADES – ADMINISTRADOR */}
+<section id="funcionalidades-admin" className="py-24 bg-[#F6F7FB]">
+  <Container>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+      <SectionTitle
+        kicker="PAINEL DO ADMINISTRADOR"
+        title="O que o dono da loja pode fazer"
+        description="Tudo que já vem pronto e pode ser gerenciado com facilidade no painel."
+      />
+      <GlassCard className="lg:col-span-2 p-6 md:p-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {[
+            "Cadastrar, editar e excluir produtos (nome, foto, preço, estoque, descrição).",
+            "Gerenciar pedidos e clientes em tempo real.",
+            "Controle de estoque automático (alerta de baixo estoque).",
+            "Aplicar descontos e cupons promocionais.",
+            "Ativar/desativar produtos com um clique.",
+            "Criar e organizar categorias (roupas, suplementos etc.).",
+            "Configurar formas de pagamento (Pix, cartão, boleto).",
+            "Definir frete por região (Correios, transportadoras, retirada).",
+            "Gerar relatórios de vendas e desempenho.",
+            "Adicionar banners e destaques na página inicial.",
+            "Gerenciar dados da loja (logo, cores, domínio, e-mail, telefone, endereço).",
+            "Acompanhar acessos e métricas via Google Analytics.",
+            "Integrar Pixel Meta (Facebook/Instagram) para anúncios.",
+            "Configurar campanhas (promoções, combos, frete grátis).",
+            "Criar usuários adicionais (equipe de atendimento).",
+            "Personalizar mensagens automáticas (confirmação e entrega).",
+            "Exportar relatórios em Excel ou PDF.",
+            "Ver estatísticas de faturamento e produtos mais vendidos.",
+            "Receber notificações por e-mail e WhatsApp a cada venda.",
+            "Editar páginas institucionais (Quem Somos, Políticas, Termos etc.).",
+          ].map((t, i) => (
+            <motion.div
+              key={i}
+              variants={liAnim}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+            >
+              <Bullet>{t}</Bullet>
+            </motion.div>
+          ))}
+        </div>
+      </GlassCard>
+    </div>
+  </Container>
+</section>
 
       {/* Como Funciona */}
       <section id="como-funciona" className="py-24">
