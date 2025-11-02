@@ -1,22 +1,36 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
 
-  // Detecta hash atual para destacar Loja Virtual
-  const isLojaVirtual =
-    typeof window !== "undefined" &&
-    (window.location.hash === "#loja-virtual-tb" ||
-     window.location.hash.startsWith("#/loja-virtual-tb"));
+  // estados ativos seguros (SSR-safe)
+  const { isLojaVirtual, isEEA } = useMemo(() => {
+    if (typeof window === "undefined") {
+      return { isLojaVirtual: false, isEEA: false };
+    }
+    const { hash, pathname } = window.location;
+    const loja =
+      hash === "#loja-virtual-tb" || hash.startsWith("#/loja-virtual-tb");
+    const eea = (pathname || "").includes("/eu-escolho-me-amar");
+    return { isLojaVirtual: loja, isEEA: eea };
+  }, []);
 
   const baseLink = "hover:text-gray-900 transition-colors";
+
+  const pillBtn =
+    "inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-4 py-1.5 font-semibold text-gray-800 shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-white";
+
   const lojaClasses = isLojaVirtual
     ? "inline-flex items-center rounded-full bg-[#2F6FED] text-white px-4 py-1.5 font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
-    : "inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-4 py-1.5 font-semibold text-gray-800 shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-white";
+    : pillBtn;
 
-  // Scroll suave
-  const handleNav = useCallback((e, id, close) => {
+  const eeaClasses = isEEA
+    ? "inline-flex items-center rounded-full bg-gradient-to-r from-[#E7C887] via-[#CDA257] to-[#B58A3E] text-white px-4 py-1.5 font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+    : pillBtn;
+
+  // Scroll suave para seções internas
+  const handleNav = useCallback((e: React.MouseEvent, id: string, close?: (v: boolean)=>void) => {
     e.preventDefault();
     const el = document.getElementById(id);
     if (!el) {
@@ -24,7 +38,7 @@ export default function SiteHeader() {
       if (close) close(false);
       return;
     }
-    const header = document.querySelector("header, .site-header");
+    const header = document.querySelector("header, .site-header") as HTMLElement | null;
     const offset = header ? header.offsetHeight : 0;
     const top = el.getBoundingClientRect().top + window.scrollY - offset - 8;
     window.history.replaceState(null, "", `#${id}`);
@@ -55,6 +69,16 @@ export default function SiteHeader() {
               <a href="#cases" onClick={(e)=>handleNav(e,"cases")} className={baseLink}>Cases</a>
               <a href="#feedbacks" onClick={(e)=>handleNav(e,"feedbacks")} className={baseLink}>Feedbacks</a>
 
+              {/* Página nova — EEA */}
+              <a
+                href="/eu-escolho-me-amar"
+                className={eeaClasses}
+                aria-current={isEEA ? "page" : undefined}
+                title="Eu Escolho Me Amar"
+              >
+                Eu Escolho Me Amar
+              </a>
+
               {/* Loja Virtual TB */}
               <a
                 href="#loja-virtual-tb"
@@ -68,7 +92,7 @@ export default function SiteHeader() {
               <a
                 href="#cta"
                 onClick={(e)=>handleNav(e,"cta")}
-                className="inline-flex items-center rounded-full border border-white/60 bg-white/90 backdrop-blur px-4 py-1.5 font-semibold text-gray-800 shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-white"
+                className={pillBtn}
               >
                 Contato
               </a>
@@ -92,6 +116,17 @@ export default function SiteHeader() {
               <a href="#cases" onClick={(e)=>handleNav(e,"cases",setOpen)} className="block rounded-lg px-3 py-2 hover:bg-gray-50">Cases</a>
               <a href="#feedbacks" onClick={(e)=>handleNav(e,"feedbacks",setOpen)} className="block rounded-lg px-3 py-2 hover:bg-gray-50">Feedbacks</a>
 
+              {/* Página nova — EEA */}
+              <a
+                href="/eu-escolho-me-amar"
+                onClick={() => setOpen(false)}
+                className={`block rounded-lg px-3 py-2 hover:bg-gray-50 ${isEEA ? "text-[#7A6039] font-semibold" : ""}`}
+                aria-current={isEEA ? "page" : undefined}
+              >
+                Eu Escolho Me Amar
+              </a>
+
+              {/* Loja Virtual TB */}
               <a
                 href="#loja-virtual-tb"
                 onClick={(e)=>handleNav(e,"loja-virtual-tb",setOpen)}
